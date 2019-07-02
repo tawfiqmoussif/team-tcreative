@@ -1,38 +1,54 @@
-/**
- * First we will load all of this project's JavaScript dependencies which
- * includes Vue and other libraries. It is a great starting point when
- * building robust, powerful web applications using Vue and Laravel.
- */
-
-require('./bootstrap');
-
-window.Vue = require('vue');
+import "./bootstrap";
+// The Vue build version to load with the `import` command
+// (runtime-only or standalone) has been set in webpack.base.conf with an alias.
+import Vue from 'vue'
+import VueRouter from 'vue-router'
+import App from './Main'
 
 
 
-//////////////////////////////
+// router setup
+import routes from './routes/routes'
+
+// Plugins
+import GlobalComponents from './globalComponents'
+import GlobalDirectives from './globalDirectives'
+import Notifications from './components/NotificationPlugin'
+
+// MaterialDashboard plugin
+import MaterialDashboard from './material-dashboard'
+
+import Chartist from 'chartist'
 
 
-/**
- * The following block of code may be used to automatically register your
- * Vue components. It will recursively scan this directory for the Vue
- * components and automatically register them with their "basename".
- *
- * Eg. ./components/ExampleComponent.vue -> <example-component></example-component>
- */
+require('./assets/css/bootstrap-rtl.css');
+require('./assets/css/material-dashboard-rtl.css');
 
-// const files = require.context('./', true, /\.vue$/i);
-// files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
+// configure router
+const router = new VueRouter({
+  routes, // short for routes: routes
+  linkExactActiveClass: 'nav-item active'
+})
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
-Vue.component('add-user', require('./components/addUser.vue').default);
+Vue.use(VueRouter)
+Vue.use(MaterialDashboard)
+Vue.use(GlobalComponents)
+Vue.use(GlobalDirectives)
+Vue.use(Notifications)
 
-/**
- * Next, we will create a fresh Vue application instance and attach it to
- * the page. Then, you may begin adding components to this application
- * or customize the JavaScript scaffolding to fit your unique needs.
- */
+// global library setup
+Object.defineProperty(Vue.prototype, '$Chartist', {
+  get () {
+    return this.$root.Chartist
+  }
+})
 
-const app = new Vue({
-    el: '#app',
-});
+/* eslint-disable no-new */
+new Vue({
+  el: '#app',
+  render: h => h(App),
+  router,
+  data: {
+    Chartist: Chartist
+  }
+})
