@@ -13,6 +13,9 @@
     <link href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" rel="stylesheet">
 	
 	<link rel="stylesheet" type="text/css" href="css/bootstrap-rtl.css">
+
+        <meta name="csrf-token" content="{{ csrf_token() }}">
+        <script>window.Laravel = { csrfToken : '{{ csrf_token() }}'}</script>
 	
 </head>
   <body>

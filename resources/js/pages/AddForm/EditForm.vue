@@ -1,5 +1,5 @@
 <template>
-  <form>
+  <form @submit.prevent="addEmploye">
     <md-card>
       <md-card-header data-background-color="green">
         <h4 class="title">المستخدمين</h4>
@@ -11,101 +11,134 @@
           <div class="md-layout-item md-small-size-100 md-size-33">
             <md-field>
               <label>رقم بطاقة التعريف الوطنية</label>
-              <md-input v-model="cin" type="text"></md-input>
+              <md-input type="text"></md-input>
             </md-field>
           </div>
 
           <div class="md-layout-item md-small-size-100 md-size-50">
             <md-field>
               <label>الاسم الشخصي</label>
-              <md-input v-model="firstname" type="text"></md-input>
+              <md-input type="text" v-model="personne.prenom"></md-input>
             </md-field>
           </div>
 
           <div class="md-layout-item md-small-size-100 md-size-50">
             <md-field>
-              <label>الاسم</label>
-              <md-input v-model="lastname" type="text"></md-input>
+              <label>الاسم العائلي</label>
+              <md-input type="text" v-model="personne.nom"></md-input>
             </md-field>
           </div>
 
           <div class="md-layout-item md-small-size-100 md-size-33">
             <md-field>
               <label>رقم الهاتف</label>
-              <md-input v-model="telephone" type="tel"></md-input>
+              <md-input type="tel" v-model="personne.tel"></md-input>
             </md-field>
           </div>
-        
+
           <div class="md-layout-item md-small-size-100 md-size-100">
             <md-field>
-              <label>Adress</label>
-              <md-input v-model="address" type="text"></md-input>
+              <label>العنوان</label>
+              <md-input type="text" v-model="personne.adresse"></md-input>
             </md-field>
           </div>
-
-          <div class="md-layout-item md-small-size-100 md-size-33">
-          <md-field>
-              <label>نسخة بطاقة التعريف الوطنية</label>
-              <md-file v-model="single" />
-         </md-field>
-         </div>
 
           <div class="md-layout-item md-small-size-100 md-size-33">
             <md-field>
               <label>نسخة بطاقة التعريف الوطنية</label>
-              <md-input v-model="photocopie" type="text"></md-input>
+              <md-file v-model="personne.photocopie_carte_national" />
             </md-field>
           </div>
           <div class="md-layout-item md-small-size-100 md-size-33">
             <md-field>
-              <label>Postal Code</label>
-              <md-input v-model="code" type="number"></md-input>
+              <label>الصورة الشخصية</label>
+              <md-file v-model="personne.photo" />
+            </md-field>
+          </div>
+          <div class="md-layout-item md-small-size-100 md-size-33">
+            <md-field>
+              <label>تاريخ العمل</label>
+              <md-input type="date" v-model="employe.date_recrutement"></md-input>
+            </md-field>
+          </div>
+          <div class="md-layout-item md-small-size-100 md-size-33">
+            <md-field>
+              <label>الأجرة</label>
+              <md-input type="text" v-model="employe.salaire"></md-input>
             </md-field>
           </div>
 
-      
           <div class="md-layout-item md-size-100 text-right">
-            <md-button class="md-raised md-success">Update Profile</md-button>
+            <md-button type="submit" class="md-raised md-success">إضافة</md-button>
           </div>
         </div>
-
       </md-card-content>
     </md-card>
   </form>
 </template>
 <script>
 export default {
-  name: 'edit-form',
+  name: "edit-form",
   props: {
     dataBackgroundColor: {
       type: String,
-      default: ''
+      default: ""
     }
   },
-  data () {
+  data() {
     return {
-      cin: null,
-      firstname: null,
-      lastname: null,
-      telephone: null,
-      address: null,
-      photocopie: null,
-      code: null,
-      
+      personne: {
+        nom: "",
+        prenom: "",
+        tel: "",
+        adresse: "",
+        photo: "",
+        photocopie_carte_national: ""
+      },
+      employes: [],
+      employe: {
+        date_recrutement: null,
+        salaire: "",
+        personne_id: "",
+        magasin_id: ""
+      }
+    };
+  },
+  methods: {
+    addEmploye() {
+      fetch("api/personne", {
+        method: "post",
+        body: JSON.stringify(this.personne),
+        headers: {
+          "content-type": "application/json"
+        }
+      })
+        .then(res => res.json())
+        .then(res => {
+          alert("Personne Added");
+          this.employe.personne_id = res.data.id;
+          this.employe.magasin_id = 1;
+          fetch("api/employe", {
+            method: "post",
+            body: JSON.stringify(this.employe),
+            headers: {
+              "content-type": "application/json"
+            }
+          })
+            .then(res => res.json())
+            .then(data => {
+              alert("Employe Added");
+              //this.fetchUsers();
+              this.$router.push({name:'EmpInfo'});
+            })
+            .catch(err => console.log(err));
+        })
+        .catch(err => console.log(err));
     }
   }
-}
-
+};
 </script>
 
-<script>
-  export default {
-    name: 'FileField',
-    data: () => ({
-      single: null
-    })
-  }
-</script>
+
 <style>
-
 </style>

@@ -13645,39 +13645,41 @@ if (false) {(function () {
   },
   data: function data() {
     return {
-      selected: [],
-      users: [{
-        name: 'Dakota Rice',
-        salary: '$36,738',
-        country: 'Niger',
-        city: 'Oud-Turnhout'
-      }, {
-        name: 'Minerva Hooper',
-        salary: '$23,738',
-        country: 'Curaçao',
-        city: 'Sinaai-Waas'
-      }, {
-        name: 'Sage Rodriguez',
-        salary: '$56,142',
-        country: 'Netherlands',
-        city: 'Overland Park'
-      }, {
-        name: 'Philip Chaney',
-        salary: '$38,735',
-        country: 'Korea, South',
-        city: 'Gloucester'
-      }, {
-        name: 'Doris Greene',
-        salary: '$63,542',
-        country: 'Malawi',
-        city: 'Feldkirchen in Kārnten'
-      }, {
-        name: 'Mason Porter',
-        salary: '$78,615',
-        country: 'Chile',
-        city: 'Gloucester'
-      }]
+      personne: {
+        nom: "",
+        prenom: "",
+        tel: "",
+        adresse: "",
+        photo: "",
+        photocopie_carte_national: ""
+      },
+      employes: [],
+      employe: {
+        date_recrutement: null,
+        salaire: "",
+        personne_id: "",
+        magasin_id: ""
+      }
     };
+  },
+  created: function created() {
+    this.fetchEmployes();
+  },
+
+  methods: {
+    fetchEmployes: function fetchEmployes() {
+      var _this = this;
+
+      fetch("/api/employes").then(function (res) {
+        return res.json();
+      }).then(function (res) {
+        //affecter res.data a articles
+        _this.employes = res.data;
+        console.log(_this.employes);
+      }).catch(function (err) {
+        return console.log(err);
+      });
+    }
   }
 });
 
@@ -13963,35 +13965,70 @@ if (false) {(function () {
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["a"] = ({
-  name: 'FileField',
+  name: "edit-form",
+  props: {
+    dataBackgroundColor: {
+      type: String,
+      default: ""
+    }
+  },
   data: function data() {
     return {
-      single: null
+      personne: {
+        nom: "",
+        prenom: "",
+        tel: "",
+        adresse: "",
+        photo: "",
+        photocopie_carte_national: ""
+      },
+      employes: [],
+      employe: {
+        date_recrutement: null,
+        salaire: "",
+        personne_id: "",
+        magasin_id: ""
+      }
     };
+  },
+
+  methods: {
+    addEmploye: function addEmploye() {
+      var _this = this;
+
+      fetch("api/personne", {
+        method: "post",
+        body: JSON.stringify(this.personne),
+        headers: {
+          "content-type": "application/json"
+        }
+      }).then(function (res) {
+        return res.json();
+      }).then(function (res) {
+        alert("Personne Added");
+        _this.employe.personne_id = res.data.id;
+        _this.employe.magasin_id = 1;
+        fetch("api/employe", {
+          method: "post",
+          body: JSON.stringify(_this.employe),
+          headers: {
+            "content-type": "application/json"
+          }
+        }).then(function (res) {
+          return res.json();
+        }).then(function (data) {
+          alert("Employe Added");
+          //this.fetchUsers();
+          _this.$router.push({ name: 'EmpInfo' });
+        }).catch(function (err) {
+          return console.log(err);
+        });
+      }).catch(function (err) {
+        return console.log(err);
+      });
+    }
   }
 });
 
@@ -40270,21 +40307,27 @@ var render = function() {
                 "md-table-row",
                 {},
                 [
-                  _c("md-table-cell", { attrs: { "md-label": "الاسم" } }, [
-                    _vm._v(_vm._s(item.name))
+                  _c(
+                    "md-table-cell",
+                    { attrs: { "md-label": "الاسم الشخصي" } },
+                    [_vm._v(_vm._s(item.personne.prenom))]
+                  ),
+                  _vm._v(" "),
+                  _c(
+                    "md-table-cell",
+                    { attrs: { "md-label": "الاسم العائلي" } },
+                    [_vm._v(_vm._s(item.personne.nom))]
+                  ),
+                  _vm._v(" "),
+                  _c("md-table-cell", { attrs: { "md-label": "الأجرة" } }, [
+                    _vm._v(_vm._s(item.salaire))
                   ]),
                   _vm._v(" "),
-                  _c("md-table-cell", { attrs: { "md-label": "الدولة" } }, [
-                    _vm._v(_vm._s(item.country))
-                  ]),
-                  _vm._v(" "),
-                  _c("md-table-cell", { attrs: { "md-label": "المدينة" } }, [
-                    _vm._v(_vm._s(item.city))
-                  ]),
-                  _vm._v(" "),
-                  _c("md-table-cell", { attrs: { "md-label": "الاجرة" } }, [
-                    _vm._v(_vm._s(item.salary))
-                  ])
+                  _c(
+                    "md-table-cell",
+                    { attrs: { "md-label": "تاريخ التشغيل" } },
+                    [_vm._v(_vm._s(item.date_recrutement))]
+                  )
                 ],
                 1
               )
@@ -40292,11 +40335,11 @@ var render = function() {
           }
         ]),
         model: {
-          value: _vm.users,
+          value: _vm.employes,
           callback: function($$v) {
-            _vm.users = $$v
+            _vm.employes = $$v
           },
-          expression: "users"
+          expression: "employes"
         }
       })
     ],
@@ -41499,7 +41542,7 @@ exports = module.exports = __webpack_require__(1)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -41517,6 +41560,14 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "form",
+    {
+      on: {
+        submit: function($event) {
+          $event.preventDefault()
+          return _vm.addEmploye($event)
+        }
+      }
+    },
     [
       _c(
         "md-card",
@@ -41542,16 +41593,7 @@ var render = function() {
                     [
                       _c("label", [_vm._v("رقم بطاقة التعريف الوطنية")]),
                       _vm._v(" "),
-                      _c("md-input", {
-                        attrs: { type: "text" },
-                        model: {
-                          value: _vm.cin,
-                          callback: function($$v) {
-                            _vm.cin = $$v
-                          },
-                          expression: "cin"
-                        }
-                      })
+                      _c("md-input", { attrs: { type: "text" } })
                     ],
                     1
                   )
@@ -41571,11 +41613,11 @@ var render = function() {
                       _c("md-input", {
                         attrs: { type: "text" },
                         model: {
-                          value: _vm.firstname,
+                          value: _vm.personne.prenom,
                           callback: function($$v) {
-                            _vm.firstname = $$v
+                            _vm.$set(_vm.personne, "prenom", $$v)
                           },
-                          expression: "firstname"
+                          expression: "personne.prenom"
                         }
                       })
                     ],
@@ -41592,16 +41634,16 @@ var render = function() {
                   _c(
                     "md-field",
                     [
-                      _c("label", [_vm._v("الاسم")]),
+                      _c("label", [_vm._v("الاسم العائلي")]),
                       _vm._v(" "),
                       _c("md-input", {
                         attrs: { type: "text" },
                         model: {
-                          value: _vm.lastname,
+                          value: _vm.personne.nom,
                           callback: function($$v) {
-                            _vm.lastname = $$v
+                            _vm.$set(_vm.personne, "nom", $$v)
                           },
-                          expression: "lastname"
+                          expression: "personne.nom"
                         }
                       })
                     ],
@@ -41623,11 +41665,11 @@ var render = function() {
                       _c("md-input", {
                         attrs: { type: "tel" },
                         model: {
-                          value: _vm.telephone,
+                          value: _vm.personne.tel,
                           callback: function($$v) {
-                            _vm.telephone = $$v
+                            _vm.$set(_vm.personne, "tel", $$v)
                           },
-                          expression: "telephone"
+                          expression: "personne.tel"
                         }
                       })
                     ],
@@ -41644,16 +41686,16 @@ var render = function() {
                   _c(
                     "md-field",
                     [
-                      _c("label", [_vm._v("Adress")]),
+                      _c("label", [_vm._v("العنوان")]),
                       _vm._v(" "),
                       _c("md-input", {
                         attrs: { type: "text" },
                         model: {
-                          value: _vm.address,
+                          value: _vm.personne.adresse,
                           callback: function($$v) {
-                            _vm.address = $$v
+                            _vm.$set(_vm.personne, "adresse", $$v)
                           },
-                          expression: "address"
+                          expression: "personne.adresse"
                         }
                       })
                     ],
@@ -41674,11 +41716,15 @@ var render = function() {
                       _vm._v(" "),
                       _c("md-file", {
                         model: {
-                          value: _vm.single,
+                          value: _vm.personne.photocopie_carte_national,
                           callback: function($$v) {
-                            _vm.single = $$v
+                            _vm.$set(
+                              _vm.personne,
+                              "photocopie_carte_national",
+                              $$v
+                            )
                           },
-                          expression: "single"
+                          expression: "personne.photocopie_carte_national"
                         }
                       })
                     ],
@@ -41695,42 +41741,67 @@ var render = function() {
                   _c(
                     "md-field",
                     [
-                      _c("label", [_vm._v("نسخة بطاقة التعريف الوطنية")]),
+                      _c("label", [_vm._v("الصورة الشخصية")]),
+                      _vm._v(" "),
+                      _c("md-file", {
+                        model: {
+                          value: _vm.personne.photo,
+                          callback: function($$v) {
+                            _vm.$set(_vm.personne, "photo", $$v)
+                          },
+                          expression: "personne.photo"
+                        }
+                      })
+                    ],
+                    1
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "md-layout-item md-small-size-100 md-size-33" },
+                [
+                  _c(
+                    "md-field",
+                    [
+                      _c("label", [_vm._v("تاريخ العمل")]),
+                      _vm._v(" "),
+                      _c("md-input", {
+                        attrs: { type: "date" },
+                        model: {
+                          value: _vm.employe.date_recrutement,
+                          callback: function($$v) {
+                            _vm.$set(_vm.employe, "date_recrutement", $$v)
+                          },
+                          expression: "employe.date_recrutement"
+                        }
+                      })
+                    ],
+                    1
+                  )
+                ],
+                1
+              ),
+              _vm._v(" "),
+              _c(
+                "div",
+                { staticClass: "md-layout-item md-small-size-100 md-size-33" },
+                [
+                  _c(
+                    "md-field",
+                    [
+                      _c("label", [_vm._v("الأجرة")]),
                       _vm._v(" "),
                       _c("md-input", {
                         attrs: { type: "text" },
                         model: {
-                          value: _vm.photocopie,
+                          value: _vm.employe.salaire,
                           callback: function($$v) {
-                            _vm.photocopie = $$v
+                            _vm.$set(_vm.employe, "salaire", $$v)
                           },
-                          expression: "photocopie"
-                        }
-                      })
-                    ],
-                    1
-                  )
-                ],
-                1
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                { staticClass: "md-layout-item md-small-size-100 md-size-33" },
-                [
-                  _c(
-                    "md-field",
-                    [
-                      _c("label", [_vm._v("Postal Code")]),
-                      _vm._v(" "),
-                      _c("md-input", {
-                        attrs: { type: "number" },
-                        model: {
-                          value: _vm.code,
-                          callback: function($$v) {
-                            _vm.code = $$v
-                          },
-                          expression: "code"
+                          expression: "employe.salaire"
                         }
                       })
                     ],
@@ -41744,9 +41815,14 @@ var render = function() {
                 "div",
                 { staticClass: "md-layout-item md-size-100 text-right" },
                 [
-                  _c("md-button", { staticClass: "md-raised md-success" }, [
-                    _vm._v("Update Profile")
-                  ])
+                  _c(
+                    "md-button",
+                    {
+                      staticClass: "md-raised md-success",
+                      attrs: { type: "submit" }
+                    },
+                    [_vm._v("إضافة")]
+                  )
                 ],
                 1
               )
@@ -80480,7 +80556,7 @@ exports = module.exports = __webpack_require__(1)(false);
 
 
 // module
-exports.push([module.i, "/*!\r\n * Bootstrap rtl v4.0.0-beta.2 \r\n * Copyright (http://nafeza.net)\r\n * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)\r\n */\r\n\r\n html {\r\n    direction: rtl;\r\n}\r\n\r\nbody {\r\n    direction: rtl;\r\n    text-align: right;\r\n}\r\n\r\ndd {\r\n    margin-right: 0;\r\n}\r\n\r\ncaption {\r\n    text-align: right;\r\n}\r\n\r\n.list-unstyled {\r\n    padding-right: 0;\r\n}\r\n\r\n.list-inline {\r\n    padding-right: 0;\r\n}\r\n\r\n.list-inline-item:not(:last-child) {\r\n    margin-right: 5px;\r\n    margin-left: 0;\r\n}\r\n\r\n.offset-1 {\r\n    margin-right: 8.333333%;\r\n    margin-left: 0;\r\n}\r\n\r\n.offset-2 {\r\n    margin-right: 16.666667%;\r\n    margin-left: 0;\r\n}\r\n\r\n.offset-3 {\r\n    margin-right: 25%;\r\n    margin-left: 0;\r\n}\r\n\r\n.offset-4 {\r\n    margin-right: 33.333333%;\r\n    margin-left: 0;\r\n}\r\n\r\n.offset-5 {\r\n    margin-right: 41.666667%;\r\n    margin-left: 0;\r\n}\r\n\r\n.offset-6 {\r\n    margin-right: 50%;\r\n    margin-left: 0;\r\n}\r\n\r\n.offset-7 {\r\n    margin-right: 58.333333%;\r\n    margin-left: 0;\r\n}\r\n\r\n.offset-8 {\r\n    margin-right: 66.666667%;\r\n    margin-left: 0;\r\n}\r\n\r\n.offset-9 {\r\n    margin-right: 75%;\r\n    margin-left: 0;\r\n}\r\n\r\n.offset-10 {\r\n    margin-right: 83.333333%;\r\n    margin-left: 0;\r\n}\r\n\r\n.offset-11 {\r\n    margin-right: 91.666667%;\r\n    margin-left: 0;\r\n}\r\n\r\n@media (min-width: 576px) {\r\n    .offset-sm-0 {\r\n        margin-right: 0;\r\n    }\r\n    .offset-sm-1 {\r\n        margin-right: 8.333333%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-sm-2 {\r\n        margin-right: 16.666667%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-sm-3 {\r\n        margin-right: 25%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-sm-4 {\r\n        margin-right: 33.333333%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-sm-5 {\r\n        margin-right: 41.666667%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-sm-6 {\r\n        margin-right: 50%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-sm-7 {\r\n        margin-right: 58.333333%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-sm-8 {\r\n        margin-right: 66.666667%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-sm-9 {\r\n        margin-right: 75%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-sm-10 {\r\n        margin-right: 83.333333%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-sm-11 {\r\n        margin-right: 91.666667%;\r\n        margin-left: 0;\r\n    }\r\n}\r\n\r\n@media (min-width: 768px) {\r\n    .offset-md-0 {\r\n        margin-right: 0;\r\n    }\r\n    .offset-md-1 {\r\n        margin-right: 8.333333%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-md-2 {\r\n        margin-right: 16.666667%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-md-3 {\r\n        margin-right: 25%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-md-4 {\r\n        margin-right: 33.333333%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-md-5 {\r\n        margin-right: 41.666667%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-md-6 {\r\n        margin-right: 50%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-md-7 {\r\n        margin-right: 58.333333%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-md-8 {\r\n        margin-right: 66.666667%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-md-9 {\r\n        margin-right: 75%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-md-10 {\r\n        margin-right: 83.333333%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-md-11 {\r\n        margin-right: 91.666667%;\r\n        margin-left: 0;\r\n    }\r\n}\r\n\r\n@media (min-width: 992px) {\r\n    .offset-lg-0 {\r\n        margin-right: 0;\r\n    }\r\n    .offset-lg-1 {\r\n        margin-right: 8.333333%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-lg-2 {\r\n        margin-right: 16.666667%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-lg-3 {\r\n        margin-right: 25%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-lg-4 {\r\n        margin-right: 33.333333%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-lg-5 {\r\n        margin-right: 41.666667%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-lg-6 {\r\n        margin-right: 50%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-lg-7 {\r\n        margin-right: 58.333333%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-lg-8 {\r\n        margin-right: 66.666667%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-lg-9 {\r\n        margin-right: 75%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-lg-10 {\r\n        margin-right: 83.333333%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-lg-11 {\r\n        margin-right: 91.666667%;\r\n        margin-left: 0;\r\n    }\r\n}\r\n\r\n@media (min-width: 1200px) {\r\n    .offset-xl-0 {\r\n        margin-right: 0;\r\n    }\r\n    .offset-xl-1 {\r\n        margin-right: 8.333333%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-xl-2 {\r\n        margin-right: 16.666667%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-xl-3 {\r\n        margin-right: 25%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-xl-4 {\r\n        margin-right: 33.333333%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-xl-5 {\r\n        margin-right: 41.666667%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-xl-6 {\r\n        margin-right: 50%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-xl-7 {\r\n        margin-right: 58.333333%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-xl-8 {\r\n        margin-right: 66.666667%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-xl-9 {\r\n        margin-right: 75%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-xl-10 {\r\n        margin-right: 83.333333%;\r\n        margin-left: 0;\r\n    }\r\n    .offset-xl-11 {\r\n        margin-right: 91.666667%;\r\n        margin-left: 0;\r\n    }\r\n}\r\n\r\n.form-check-label {\r\n    padding-right: 1.25rem;\r\n    padding-left: 0;\r\n}\r\n\r\n.form-check-input {\r\n    margin-right: -1.25rem;\r\n    margin-left: 0;\r\n}\r\n\r\n.form-check-inline {\r\n    margin-left: 0.75rem;\r\n    margin-right: 0;\r\n}\r\n\r\n@media (min-width: 576px) {\r\n    .form-inline .form-check-label {\r\n        padding-right: 0;\r\n    }\r\n    .form-inline .form-check-input {\r\n        margin-left: 0.25rem;\r\n        margin-right: 0;\r\n    }\r\n}\r\n\r\n.dropdown-toggle::after {\r\n    margin-right: 0.255em;\r\n    margin-left: 0;\r\n}\r\n\r\n.dropdown-toggle:empty::after {\r\n    margin-right: 0;\r\n}\r\n\r\n.dropdown-menu {\r\n    right: 0;\r\n    left: initial;\r\n    float: right;\r\n    text-align: right;\r\n}\r\n\r\n.dropup .dropdown-toggle::after {\r\n    margin-right: 0.255em;\r\n    margin-left: 0;\r\n}\r\n\r\n.dropup .dropdown-toggle:empty::after {\r\n    margin-right: 0;\r\n}\r\n\r\n.btn-group .btn + .btn,\r\n.btn-group .btn + .btn-group,\r\n.btn-group .btn-group + .btn,\r\n.btn-group .btn-group + .btn-group,\r\n.btn-group-vertical .btn + .btn,\r\n.btn-group-vertical .btn + .btn-group,\r\n.btn-group-vertical .btn-group + .btn,\r\n.btn-group-vertical .btn-group + .btn-group {\r\n    margin-right: -1px;\r\n    margin-left: 0;\r\n}\r\n\r\n.btn-group > .btn:first-child {\r\n    margin-right: 0;\r\n}\r\n\r\n.btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {\r\n    border-top-left-radius: 0;\r\n    border-bottom-left-radius: 0;\r\n}\r\n\r\n.btn-group > .btn:last-child:not(:first-child),\r\n.btn-group > .dropdown-toggle:not(:first-child) {\r\n    border-top-right-radius: 0;\r\n    border-bottom-right-radius: 0;\r\n}\r\n\r\n.btn-group > .btn-group {\r\n    float: right;\r\n}\r\n\r\n.btn-group > .btn-group:first-child:not(:last-child) > .btn:last-child,\r\n.btn-group > .btn-group:first-child:not(:last-child) > .dropdown-toggle {\r\n    border-top-left-radius: 0;\r\n    border-bottom-left-radius: 0;\r\n}\r\n\r\n.btn-group > .btn-group:last-child:not(:first-child) > .btn:first-child {\r\n    border-top-right-radius: 0;\r\n    border-bottom-right-radius: 0;\r\n}\r\n\r\n.btn + .dropdown-toggle-split {\r\n    padding-right: 0.5625rem;\r\n    padding-left: 0.5625rem;\r\n}\r\n\r\n.btn + .dropdown-toggle-split::after {\r\n    margin-right: 0;\r\n}\r\n\r\n.btn-group-vertical > .btn + .btn,\r\n.btn-group-vertical > .btn + .btn-group,\r\n.btn-group-vertical > .btn-group + .btn,\r\n.btn-group-vertical > .btn-group + .btn-group {\r\n    margin-right: 0;\r\n}\r\n\r\n.input-group-addon:not(:last-child) {\r\n    border-left: 0;\r\n}\r\n\r\n.input-group .form-control:not(:first-child),\r\n.input-group-addon:not(:first-child),\r\n.input-group-btn:not(:first-child) > .btn,\r\n.input-group-btn:not(:first-child) > .btn-group > .btn,\r\n.input-group-btn:not(:first-child) > .dropdown-toggle,\r\n.input-group-btn:not(:last-child) > .btn:not(:first-child),\r\n.input-group-btn:not(:last-child) > .btn-group:not(:first-child) > .btn {\r\n    border-top-right-radius: 0;\r\n    border-bottom-right-radius: 0;\r\n}\r\n\r\n.form-control + .input-group-addon:not(:first-child) {\r\n    border-right: 0;\r\n}\r\n\r\n.input-group-btn > .btn + .btn {\r\n    margin-right: -1px;\r\n    margin-left: 0;\r\n}\r\n\r\n.input-group-btn:first-child > .btn + .btn {\r\n    margin-right: 0;\r\n}\r\n\r\n.input-group-btn:not(:last-child) > .btn,\r\n.input-group-btn:not(:last-child) > .btn-group {\r\n    margin-left: -1px;\r\n    margin-right: 0;\r\n}\r\n\r\n.input-group-btn:not(:first-child) > .btn,\r\n.input-group-btn:not(:first-child) > .btn-group {\r\n    margin-right: 0;\r\n}\r\n\r\n.input-group-btn:not(:first-child) > .btn:first-child,\r\n.input-group-btn:not(:first-child) > .btn-group:first-child {\r\n    margin-right: -1px;\r\n    margin-left: 0;\r\n}\r\n\r\n.custom-control {\r\n    padding-right: 1.5rem;\r\n    padding-left: 0;\r\n    margin-left: 1rem;\r\n    margin-right: 0;\r\n}\r\n\r\n.custom-control-indicator {\r\n    right: 0;\r\n    left: initial;\r\n}\r\n\r\n.custom-controls-stacked .custom-control + .custom-control {\r\n    margin-right: 0;\r\n}\r\n\r\n\r\n.custom-file-control::before {\r\n    left: -1px;\r\n    right: 0;\r\n}\r\n\r\n.nav {\r\n    padding-right: 0;\r\n}\r\n\r\n.navbar-brand {\r\n    margin-left: 1rem;\r\n    margin-right: 0;\r\n}\r\n\r\n.navbar-nav {\r\n    padding-right: 0;\r\n}\r\n\r\n@media (min-width: 576px) {\r\n    .navbar-expand-sm .navbar-nav .dropdown-menu-right {\r\n        left: 0;\r\n        right: auto;\r\n    }\r\n}\r\n\r\n@media (min-width: 768px) {\r\n    .navbar-expand-md .navbar-nav .dropdown-menu-right {\r\n        left: 0;\r\n        right: auto;\r\n    }\r\n}\r\n\r\n@media (min-width: 992px) {\r\n    .navbar-expand-lg .navbar-nav .dropdown-menu-right {\r\n        left: 0;\r\n        right: auto;\r\n    }\r\n}\r\n\r\n@media (min-width: 1200px) {\r\n    .navbar-expand-xl .navbar-nav .dropdown-menu-right {\r\n        left: 0;\r\n        right: auto;\r\n    }\r\n}\r\n\r\n.navbar-expand .navbar-nav .dropdown-menu-right {\r\n    left: 0;\r\n    right: auto;\r\n}\r\n\r\n.card-link + .card-link {\r\n    margin-right: 1.25rem;\r\n    margin-left: 0;\r\n}\r\n\r\n.card-footer:last-child {\r\n    border-radius: 0 calc(0.25rem - 1px) calc(0.25rem - 1px) 0;\r\n}\r\n\r\n.pagination {\r\n    padding-right: 0;\r\n}\r\n\r\n.page-item:first-child .page-link {\r\n    margin-right: 0;\r\n    border-top-right-radius: 0.25rem;\r\n    border-bottom-right-radius: 0.25rem;\r\n    border-top-left-radius: initial;\r\n    border-bottom-left-radius: initial;\r\n}\r\n\r\n.page-item:last-child .page-link {\r\n    border-top-left-radius: 0.25rem;\r\n    border-bottom-left-radius: 0.25rem;\r\n    border-top-right-radius: initial;\r\n    border-bottom-right-radius: initial;\r\n}\r\n\r\n.page-link {\r\n    margin-right: -1px;\r\n    margin-left: 0px;\r\n}\r\n\r\n.pagination-lg .page-item:first-child .page-link {\r\n    border-top-right-radius: 0.3rem;\r\n    border-bottom-right-radius: 0.3rem;\r\n    border-top-left-radius: 0;\r\n    border-bottom-left-radius: 0;\r\n}\r\n\r\n.pagination-lg .page-item:last-child .page-link {\r\n    border-top-left-radius: 0.3rem;\r\n    border-bottom-left-radius: 0.3rem;\r\n    border-top-right-radius: 0;\r\n    border-bottom-right-radius: 0;\r\n}\r\n\r\n.pagination-sm .page-item:first-child .page-link {\r\n    border-top-right-radius: 0.2rem;\r\n    border-bottom-right-radius: 0.2rem;\r\n    border-top-left-radius: 0;\r\n    border-bottom-left-radius: 0;\r\n}\r\n\r\n.pagination-sm .page-item:last-child .page-link {\r\n    border-top-left-radius: 0.2rem;\r\n    border-bottom-left-radius: 0.2rem;\r\n    border-top-right-radius: 0;\r\n    border-bottom-right-radius: 0;\r\n}\r\n\r\n\r\n.alert-dismissible .close {\r\n    left: 0;\r\n    right: initial;\r\n}\r\n\r\n\r\n.list-group {\r\n    padding-right: 0;\r\n}\r\n\r\n\r\n.modal-header .close {\r\n    margin: -15px auto -15px -15px;\r\n}\r\n\r\n.modal-footer > :not(:first-child) {\r\n    margin-right: .25rem;\r\n    margin-left: 0;\r\n}\r\n\r\n.modal-footer > :not(:last-child) {\r\n    margin-left: .25rem;\r\n    margin-right: 0;\r\n}\r\n\r\n.tooltip {\r\n    text-align: right;\r\n}\r\n\r\n.tooltip.bs-tooltip-top .arrow::before, .tooltip.bs-tooltip-auto[x-placement^=\"top\"] .arrow::before {\r\n    margin-right: -3px;\r\n    margin-left: 0;\r\n}\r\n\r\n.tooltip.bs-tooltip-right .arrow, .tooltip.bs-tooltip-auto[x-placement^=\"right\"] .arrow {\r\n    right: 0;\r\n    left: initial;\r\n}\r\n\r\n.tooltip.bs-tooltip-right .arrow::before, .tooltip.bs-tooltip-auto[x-placement^=\"right\"] .arrow::before {\r\n    border-left-color: #000;\r\n    border-right-color: initial;\r\n}\r\n\r\n.tooltip.bs-tooltip-bottom .arrow::before, .tooltip.bs-tooltip-auto[x-placement^=\"bottom\"] .arrow::before {\r\n    margin-right: -3px;\r\n    margin-left: 0;\r\n}\r\n\r\n.tooltip.bs-tooltip-left .arrow, .tooltip.bs-tooltip-auto[x-placement^=\"left\"] .arrow {\r\n    left: 0;\r\n    right: initial;\r\n}\r\n\r\n.tooltip.bs-tooltip-left .arrow::before, .tooltip.bs-tooltip-auto[x-placement^=\"left\"] .arrow::before {\r\n    left: 0;\r\n    right: initial;\r\n    border-right-color: #000;\r\n    border-left-color: initial;\r\n}\r\n\r\n.popover {\r\n    right: 0;\r\n    left: initial;\r\n    text-align: right;\r\n}\r\n\r\n\r\n.popover.bs-popover-top .arrow::before, .popover.bs-popover-auto[x-placement^=\"top\"] .arrow::before {\r\n    margin-right: -0.8rem;\r\n    margin-left: 0;\r\n}\r\n\r\n.popover.bs-popover-top .arrow::after, .popover.bs-popover-auto[x-placement^=\"top\"] .arrow::after {\r\n    margin-right: 0.8rem;\r\n    margin-left: 0;\r\n}\r\n\r\n.popover.bs-popover-right, .popover.bs-popover-auto[x-placement^=\"right\"] {\r\n    margin-right: 0.8rem;\r\n    margin-left: 0;\r\n}\r\n\r\n.popover.bs-popover-right .arrow, .popover.bs-popover-auto[x-placement^=\"right\"] .arrow {\r\n    right: 0;\r\n    left: initial;\r\n}\r\n\r\n.popover.bs-popover-right .arrow::before, .popover.bs-popover-auto[x-placement^=\"right\"] .arrow::before,\r\n.popover.bs-popover-right .arrow::after, .popover.bs-popover-auto[x-placement^=\"right\"] .arrow::after {\r\n    border-right-width: 0;\r\n    border-left-width: initial;\r\n}\r\n\r\n.popover.bs-popover-right .arrow::before, .popover.bs-popover-auto[x-placement^=\"right\"] .arrow::before {\r\n    left: -0.8rem;\r\n    right: initial;\r\n    border-left-color: rgba(0, 0, 0, 0.25);\r\n    border-right-color: initial;\r\n}\r\n\r\n.popover.bs-popover-right .arrow::after, .popover.bs-popover-auto[x-placement^=\"right\"] .arrow::after {\r\n    right: calc((0.8rem - 1px) * -1);\r\n    left: initial;\r\n    border-left-color: #fff;\r\n    border-right-color: initial;\r\n}\r\n\r\n.popover.bs-popover-bottom .arrow::before, .popover.bs-popover-auto[x-placement^=\"bottom\"] .arrow::before,\r\n.popover.bs-popover-bottom .arrow::after, .popover.bs-popover-auto[x-placement^=\"bottom\"] .arrow::after {\r\n    margin-right: -0.8rem;\r\n    margin-left: 0;\r\n}\r\n\r\n.popover.bs-popover-bottom .popover-header::before, .popover.bs-popover-auto[x-placement^=\"bottom\"] .popover-header::before {\r\n    right: 50%;\r\n    left: initial;\r\n    margin-right: -10px;\r\n    margin-left: 0px;\r\n}\r\n\r\n.popover.bs-popover-left, .popover.bs-popover-auto[x-placement^=\"left\"] {\r\n    margin-left: 0.8rem;\r\n    margin-right: 0;\r\n}\r\n\r\n.popover.bs-popover-left .arrow, .popover.bs-popover-auto[x-placement^=\"left\"] .arrow {\r\n    left: 0;\r\n    right: initial;\r\n}\r\n\r\n.popover.bs-popover-left .arrow::before, .popover.bs-popover-auto[x-placement^=\"left\"] .arrow::before,\r\n.popover.bs-popover-left .arrow::after, .popover.bs-popover-auto[x-placement^=\"left\"] .arrow::after {\r\n    border-left-width: 0;\r\n}\r\n\r\n.popover.bs-popover-left .arrow::before, .popover.bs-popover-auto[x-placement^=\"left\"] .arrow::before {\r\n    left: -0.8rem;\r\n    right: initial;\r\n    border-right-color: rgba(0, 0, 0, 0.25);\r\n    border-left-color: initial;\r\n}\r\n\r\n.popover.bs-popover-left .arrow::after, .popover.bs-popover-auto[x-placement^=\"left\"] .arrow::after {\r\n    left: calc((0.8rem - 1px) * -1);\r\n    right: initial;\r\n    border-right-color: #fff;\r\n    border-left-color: initial;\r\n}\r\n\r\n.carousel-item-next.carousel-item-left,\r\n.carousel-item-prev.carousel-item-right {\r\n    -webkit-transform: translateX(0);\r\n    transform: translateX(0);\r\n}\r\n\r\n@supports ((-webkit-transform-style: preserve-3d) or (transform-style: preserve-3d)) {\r\n    .carousel-item-next.carousel-item-left,\r\n    .carousel-item-prev.carousel-item-right {\r\n        -webkit-transform: translate3d(0, 0, 0);\r\n        transform: translate3d(0, 0, 0);\r\n    }\r\n}\r\n\r\n.carousel-item-next,\r\n.active.carousel-item-left {\r\n    -webkit-transform: translateX(100%);\r\n    transform: translateX(100%);\r\n}\r\n\r\n.carousel-item-next,\r\n.active.carousel-item-right {\r\n    -webkit-transform: translateX(0);\r\n    transform: translateX(0);\r\n}\r\n\r\n@supports ((-webkit-transform-style: preserve-3d) or (transform-style: preserve-3d)) {\r\n    .carousel-item-next,\r\n    .active.carousel-item-left {\r\n        -webkit-transform: translate3d(100%, 0, 0);\r\n        transform: translate3d(100%, 0, 0);\r\n    }\r\n    .carousel-item-next,\r\n    .active.carousel-item-right {\r\n        -webkit-transform: translate3d(0, 0, 0);\r\n        transform: translate3d(0, 0, 0);\r\n    }\r\n}\r\n\r\n.carousel-item-prev,\r\n.active.carousel-item-left {\r\n    -webkit-transform: translateX(-100%);\r\n    transform: translateX(-100%);\r\n}\r\n\r\n.carousel-item-prev,\r\n.active.carousel-item-left {\r\n    -webkit-transform: translateX(0%);\r\n    transform: translateX(0%);\r\n}\r\n\r\n@supports ((-webkit-transform-style: preserve-3d) or (transform-style: preserve-3d)) {\r\n    .carousel-item-prev,\r\n    .active.carousel-item-right {\r\n        -webkit-transform: translate3d(-100%, 0, 0);\r\n        transform: translate3d(-100%, 0, 0);\r\n    }\r\n    .active.carousel-item-left {\r\n        -webkit-transform: translate3d(0, 0, 0);\r\n        transform: translate3d(0, 0, 0);\r\n    }\r\n}\r\n\r\n.carousel-control-prev {\r\n    right: 0;\r\n    left: initial;\r\n}\r\n\r\n.carousel-control-next {\r\n    left: 0;\r\n    right: initial;\r\n}\r\n\r\n.carousel-indicators {\r\n    padding-right: 0;\r\n}\r\n.carousel-indicators li::before {\r\n    right: 0;\r\n    left: initial;\r\n}\r\n\r\n.carousel-indicators li::after {\r\n    right: 0;\r\n    left: initial;\r\n}\r\n\r\n.border-right-0 {\r\n    border-left: 0 !important;\r\n}\r\n\r\n.border-left-0 {\r\n    border-right: 0 !important;\r\n}\r\n\r\n.rounded-right {\r\n    border-top-left-radius: 0.25rem !important;\r\n    border-bottom-left-radius: 0.25rem !important;\r\n}\r\n\r\n.rounded-left {\r\n    border-top-right-radius: 0.25rem !important;\r\n    border-bottom-right-radius: 0.25rem !important;\r\n}\r\n\r\n.embed-responsive .embed-responsive-item,\r\n.embed-responsive iframe,\r\n.embed-responsive embed,\r\n.embed-responsive object,\r\n.embed-responsive video {\r\n    position: absolute;\r\n    right: 0;\r\n    left: initial;\r\n}\r\n\r\n.float-left {\r\n    float: right !important;\r\n}\r\n\r\n.float-right {\r\n    float: left !important;\r\n}\r\n\r\n@media (min-width: 576px) {\r\n    .float-sm-left {\r\n        float: right !important;\r\n    }\r\n    .float-sm-right {\r\n        float: left !important;\r\n    }\r\n}\r\n\r\n@media (min-width: 768px) {\r\n    .float-md-left {\r\n        float: right !important;\r\n    }\r\n    .float-md-right {\r\n        float: left !important;\r\n    }\r\n}\r\n\r\n@media (min-width: 992px) {\r\n    .float-lg-left {\r\n        float: right !important;\r\n    }\r\n    .float-lg-right {\r\n        float: left !important;\r\n    }\r\n}\r\n\r\n@media (min-width: 1200px) {\r\n    .float-xl-left {\r\n        float: right !important;\r\n    }\r\n    .float-xl-right {\r\n        float: left !important;\r\n    }\r\n}\r\n\r\n.mr-0,\r\n.mx-0 {\r\n    margin-left: 0 !important;\r\n}\r\n\r\n.ml-0,\r\n.mx-0 {\r\n    margin-right: 0 !important;\r\n}\r\n\r\n.mr-1,\r\n.mx-1 {\r\n    margin-left: 0.25rem !important;\r\n}\r\n\r\n.ml-1,\r\n.mx-1 {\r\n    margin-right: 0.25rem !important;\r\n}\r\n\r\n\r\n.mr-2,\r\n.mx-2 {\r\n    margin-left: 0.5rem !important;\r\n}\r\n\r\n.ml-2,\r\n.mx-2 {\r\n    margin-right: 0.5rem !important;\r\n}\r\n\r\n.mr-3,\r\n.mx-3 {\r\n    margin-left: 1rem !important;\r\n}\r\n\r\n.ml-3,\r\n.mx-3 {\r\n    margin-right: 1rem !important;\r\n}\r\n\r\n.mr-4,\r\n.mx-4 {\r\n    margin-left: 1.5rem !important;\r\n}\r\n\r\n.ml-4,\r\n.mx-4 {\r\n    margin-right: 1.5rem !important;\r\n}\r\n\r\n.mr-5,\r\n.mx-5 {\r\n    margin-left: 3rem !important;\r\n}\r\n\r\n.ml-5,\r\n.mx-5 {\r\n    margin-right: 3rem !important;\r\n}\r\n\r\n.pr-0,\r\n.px-0 {\r\n    padding-left: 0 !important;\r\n}\r\n\r\n.pl-0,\r\n.px-0 {\r\n    padding-right: 0 !important;\r\n}\r\n\r\n.pr-1,\r\n.px-1 {\r\n    padding-left: 0.25rem !important;\r\n}\r\n\r\n.pl-1,\r\n.px-1 {\r\n    padding-right: 0.25rem !important;\r\n}\r\n\r\n.pr-2,\r\n.px-2 {\r\n    padding-left: 0.5rem !important;\r\n}\r\n\r\n.pl-2,\r\n.px-2 {\r\n    padding-right: 0.5rem !important;\r\n}\r\n\r\n.pr-3,\r\n.px-3 {\r\n    padding-left: 1rem !important;\r\n}\r\n\r\n.pl-3,\r\n.px-3 {\r\n    padding-right: 1rem !important;\r\n}\r\n\r\n.pr-4,\r\n.px-4 {\r\n    padding-left: 1.5rem !important;\r\n    padding-right: 0 !important;\r\n}\r\n\r\n.pl-4,\r\n.px-4 {\r\n    padding-right: 1.5rem !important;\r\n    padding-left: 0 !important;\r\n}\r\n\r\n.pr-5,\r\n.px-5 {\r\n    padding-left: 3rem !important;\r\n    padding-right: 0 !important;\r\n}\r\n\r\n.pl-5,\r\n.px-5 {\r\n    padding-right: 3rem !important;\r\n    padding-left: 0 !important;\r\n}\r\n\r\n.mr-auto,\r\n.mx-auto {\r\n    margin-left: auto !important;\r\n    margin-right: 0 !important;\r\n}\r\n\r\n.ml-auto,\r\n.mx-auto {\r\n    margin-right: auto !important;\r\n    margin-left: 0 !important;\r\n}\r\n\r\n@media (min-width: 576px) {\r\n    .mr-sm-0,\r\n    .mx-sm-0 {\r\n        margin-left: 0 !important;\r\n    }\r\n    .ml-sm-0,\r\n    .mx-sm-0 {\r\n        margin-right: 0 !important;\r\n    }\r\n    .mr-sm-1,\r\n    .mx-sm-1 {\r\n        margin-left: 0.25rem !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .ml-sm-1,\r\n    .mx-sm-1 {\r\n        margin-right: 0.25rem !important;\r\n        margin-left: 0 !important;\r\n    }\r\n    .mr-sm-2,\r\n    .mx-sm-2 {\r\n        margin-left: 0.5rem !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .ml-sm-2,\r\n    .mx-sm-2 {\r\n        margin-right: 0.5rem !important;\r\n        margin-left: 0 !important;\r\n    }\r\n    .mr-sm-3,\r\n    .mx-sm-3 {\r\n        margin-left: 1rem !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .ml-sm-3,\r\n    .mx-sm-3 {\r\n        margin-right: 1rem !important;\r\n        margin-left: 0 !important;\r\n    }\r\n    .mr-sm-4,\r\n    .mx-sm-4 {\r\n        margin-left: 1.5rem !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .ml-sm-4,\r\n    .mx-sm-4 {\r\n        margin-right: 1.5rem !important;\r\n        margin-left: 0 !important;\r\n    }\r\n    .mr-sm-5,\r\n    .mx-sm-5 {\r\n        margin-left: 3rem !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .ml-sm-5,\r\n    .mx-sm-5 {\r\n        margin-right: 3rem !important;\r\n        margin-left: 0 !important;\r\n    }\r\n    .pr-sm-0,\r\n    .px-sm-0 {\r\n        padding-left: 0 !important;\r\n    }\r\n    .pl-sm-0,\r\n    .px-sm-0 {\r\n        padding-right: 0 !important;\r\n    }\r\n    .pt-sm-1,\r\n    .py-sm-1 {\r\n        padding-right: 0.25rem !important;\r\n        padding-top: 0 !important;\r\n    }\r\n    .pr-sm-1,\r\n    .px-sm-1 {\r\n        padding-top: 0.25rem !important;\r\n        padding-right: 0 !important;\r\n    }\r\n    .pl-sm-1,\r\n    .px-sm-1 {\r\n        padding-left: 0.25rem !important;\r\n    }\r\n    .pr-sm-2,\r\n    .px-sm-2 {\r\n        padding-left: 0.5rem !important;\r\n        padding-right: 0 !important;\r\n    }\r\n    .pl-sm-2,\r\n    .px-sm-2 {\r\n        padding-right: 0.5rem !important;\r\n        padding-left: 0 !important;\r\n    }\r\n    .pr-sm-3,\r\n    .px-sm-3 {\r\n        padding-left: 1rem !important;\r\n        padding-right: 0 !important;\r\n    }\r\n    .pl-sm-3,\r\n    .px-sm-3 {\r\n        padding-right: 1rem !important;\r\n        padding-left: 0 !important;\r\n    }\r\n    .pr-sm-4,\r\n    .px-sm-4 {\r\n        padding-left: 1.5rem !important;\r\n        padding-right: 0 !important;\r\n    }\r\n    .pl-sm-4,\r\n    .px-sm-4 {\r\n        padding-right: 1.5rem !important;\r\n        padding-left: 0 !important;\r\n    }\r\n    .pr-sm-5,\r\n    .px-sm-5 {\r\n        padding-left: 3rem !important;\r\n        padding-right: 0 !important;\r\n    }\r\n    .pl-sm-5,\r\n    .px-sm-5 {\r\n        padding-right: 3rem !important;\r\n        padding-left: 0 !important;\r\n    }\r\n    .mr-sm-auto,\r\n    .mx-sm-auto {\r\n        margin-left: auto !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .ml-sm-auto,\r\n    .mx-sm-auto {\r\n        margin-right: auto !important;\r\n        margin-left: 0 !important;\r\n    }\r\n}\r\n\r\n@media (min-width: 768px) {\r\n    .mr-md-0,\r\n    .mx-md-0 {\r\n        margin-left: 0 !important;\r\n    }\r\n    .ml-md-0,\r\n    .mx-md-0 {\r\n        margin-right: 0 !important;\r\n    }\r\n    .mr-md-1,\r\n    .mx-md-1 {\r\n        margin-left: 0.25rem !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .ml-md-1,\r\n    .mx-md-1 {\r\n        margin-right: 0.25rem !important;\r\n        margin-left: 0 !important;\r\n    }\r\n    .mr-md-2,\r\n    .mx-md-2 {\r\n        margin-left: 0.5rem !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .ml-md-2,\r\n    .mx-md-2 {\r\n        margin-right: 0.5rem !important;\r\n        margin-left: 0 !important;\r\n    }\r\n    .mr-md-3,\r\n    .mx-md-3 {\r\n        margin-left: 1rem !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .ml-md-3,\r\n    .mx-md-3 {\r\n        margin-right: 1rem !important;\r\n        margin-left: 0 !important;\r\n    }\r\n    .mr-md-4,\r\n    .mx-md-4 {\r\n        margin-left: 1.5rem !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .ml-md-4,\r\n    .mx-md-4 {\r\n        margin-right: 1.5rem !important;\r\n        margin-left: 0 !important;\r\n    }\r\n    .mr-md-5,\r\n    .mx-md-5 {\r\n        margin-left: 3rem !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .ml-md-5,\r\n    .mx-md-5 {\r\n        margin-right: 3rem !important;\r\n        margin-left: 0 !important;\r\n    }\r\n    .pr-md-0,\r\n    .px-md-0 {\r\n        padding-left: 0 !important;\r\n    }\r\n    .pb-md-0,\r\n    .py-md-0 {\r\n        padding-bottom: 0 !important;\r\n    }\r\n    .pl-md-0,\r\n    .px-md-0 {\r\n        padding-right: 0 !important;\r\n    }\r\n    .pr-md-1,\r\n    .px-md-1 {\r\n        padding-left: 0.25re !important;\r\n        padding-right: 0 !important;\r\n    }\r\n    .pl-md-1,\r\n    .px-md-1 {\r\n        padding-right: 0.25rem !important;\r\n        padding-left: 0 !important;\r\n    }\r\n    .pr-md-2,\r\n    .px-md-2 {\r\n        padding-left: 0.5rem !important;\r\n        padding-right: 0 !important;\r\n    }\r\n    .pl-md-2,\r\n    .px-md-2 {\r\n        padding-left: 0.5rem !important;\r\n        padding-right: 0 !important;\r\n    }\r\n    .pr-md-3,\r\n    .px-md-3 {\r\n        padding-left: 1rem !important;\r\n        padding-right: 0 !important;\r\n    }\r\n    .pl-md-3,\r\n    .px-md-3 {\r\n        padding-right: 1rem !important;\r\n        padding-left: 0 !important;\r\n    }\r\n    .pr-md-4,\r\n    .px-md-4 {\r\n        padding-left: 1.5rem !important;\r\n        padding-right: 0 !important;\r\n    }\r\n    .pl-md-4,\r\n    .px-md-4 {\r\n        padding-right: 1.5rem !important;\r\n        padding-left: 0 !important;\r\n    }\r\n    .pr-md-5,\r\n    .px-md-5 {\r\n        padding-left: 3rem !important;\r\n        padding-right: 0 !important;\r\n    }\r\n    .pl-md-5,\r\n    .px-md-5 {\r\n        padding-right: 3rem !important;\r\n        padding-left: 0 !important;\r\n    }\r\n    .mr-md-auto,\r\n    .mx-md-auto {\r\n        margin-left: auto !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .ml-md-auto,\r\n    .mx-md-auto {\r\n        margin-right: auto !important;\r\n        margin-left: 0 !important;\r\n    }\r\n}\r\n\r\n@media (min-width: 992px) {\r\n    .mr-lg-0,\r\n    .mx-lg-0 {\r\n        margin-left: 0 !important;\r\n    }\r\n    .ml-lg-0,\r\n    .mx-lg-0 {\r\n        margin-right: 0 !important;\r\n    }\r\n    .mr-lg-1,\r\n    .mx-lg-1 {\r\n        margin-left: 0.25rem !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .ml-lg-1,\r\n    .mx-lg-1 {\r\n        margin-left: 0.25rem !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .mr-lg-2,\r\n    .mx-lg-2 {\r\n        margin-left: 0.5rem !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .ml-lg-2,\r\n    .mx-lg-2 {\r\n        margin-right: 0.5rem !important;\r\n        margin-left: 0 !important;\r\n    }\r\n    .mr-lg-3,\r\n    .mx-lg-3 {\r\n        margin-left: 1rem !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .ml-lg-3,\r\n    .mx-lg-3 {\r\n        margin-right: 1rem !important;\r\n        margin-left: 0 !important;\r\n    }\r\n    .mr-lg-4,\r\n    .mx-lg-4 {\r\n        margin-left: 1.5rem !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .ml-lg-4,\r\n    .mx-lg-4 {\r\n        margin-right: 1.5rem !important;\r\n        margin-left: 0 !important;\r\n    }\r\n    .mr-lg-5,\r\n    .mx-lg-5 {\r\n        margin-left: 3rem !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .ml-lg-5,\r\n    .mx-lg-5 {\r\n        margin-right: 3rem !important;\r\n        margin-left: 0 !important;\r\n    }\r\n    .pr-lg-0,\r\n    .px-lg-0 {\r\n        padding-left: 0 !important;\r\n    }\r\n    .pl-lg-0,\r\n    .px-lg-0 {\r\n        padding-right: 0 !important;\r\n    }\r\n    .pr-lg-1,\r\n    .px-lg-1 {\r\n        padding-left: 0.25rem !important;\r\n        padding-right: 0 !important;\r\n    }\r\n    .pl-lg-1,\r\n    .px-lg-1 {\r\n        padding-right: 0.25rem !important;\r\n        padding-left: 0 !important;\r\n    }\r\n    .pr-lg-2,\r\n    .px-lg-2 {\r\n        padding-left: 0.5rem !important;\r\n        padding-right: 0 !important;\r\n    }\r\n    .pl-lg-2,\r\n    .px-lg-2 {\r\n        padding-right: 0.5rem !important;\r\n        padding-left: 0 !important;\r\n    }\r\n    .pr-lg-3,\r\n    .px-lg-3 {\r\n        padding-left: 1rem !important;\r\n        padding-right: 0 !important;\r\n    }\r\n    .pl-lg-3,\r\n    .px-lg-3 {\r\n        padding-right: 1rem !important;\r\n        padding-left: 0 !important;\r\n    }\r\n    .pr-lg-4,\r\n    .px-lg-4 {\r\n        padding-left: 1.5rem !important;\r\n        padding-right: 0 !important;\r\n    }\r\n    .pl-lg-4,\r\n    .px-lg-4 {\r\n        padding-right: 1.5rem !important;\r\n        padding-left: 0 !important;\r\n    }\r\n    .pr-lg-5,\r\n    .px-lg-5 {\r\n        padding-left: 3rem !important;\r\n        padding-right: 0 !important;\r\n    }\r\n    .pl-lg-5,\r\n    .px-lg-5 {\r\n        padding-right: 3rem !important;\r\n        padding-left: 0 !important;\r\n    }\r\n    .mr-lg-auto,\r\n    .mx-lg-auto {\r\n        margin-left: auto !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .ml-lg-auto,\r\n    .mx-lg-auto {\r\n        margin-right: auto !important;\r\n        margin-left: 0 !important;\r\n    }\r\n}\r\n\r\n@media (min-width: 1200px) {\r\n    .mr-xl-0,\r\n    .mx-xl-0 {\r\n        margin-left: 0 !important;\r\n    }\r\n    .ml-xl-0,\r\n    .mx-xl-0 {\r\n        margin-right: 0 !important;\r\n    }\r\n    .mr-xl-1,\r\n    .mx-xl-1 {\r\n        margin-left: 0.25rem !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .ml-xl-1,\r\n    .mx-xl-1 {\r\n        margin-right: 0.25rem !important;\r\n        margin-left: 0 !important;\r\n    }\r\n    .mr-xl-2,\r\n    .mx-xl-2 {\r\n        margin-left: 0.5rem !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .ml-xl-2,\r\n    .mx-xl-2 {\r\n        margin-right: 0.5rem !important;\r\n        margin-left: 0 !important;\r\n    }\r\n    .mr-xl-3,\r\n    .mx-xl-3 {\r\n        margin-left: 1rem !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .ml-xl-3,\r\n    .mx-xl-3 {\r\n        margin-right: 1rem !important;\r\n        margin-left: 0 !important;\r\n    }\r\n    .mr-xl-4,\r\n    .mx-xl-4 {\r\n        margin-left: 1.5rem !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .ml-xl-4,\r\n    .mx-xl-4 {\r\n        margin-right: 1.5rem !important;\r\n        margin-left: 0 !important;\r\n    }\r\n    .mr-xl-5,\r\n    .mx-xl-5 {\r\n        margin-left: 3rem !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .ml-xl-5,\r\n    .mx-xl-5 {\r\n        margin-right: 3rem !important;\r\n        margin-left: 0 !important;\r\n    }\r\n    .pr-xl-0,\r\n    .px-xl-0 {\r\n        padding-left: 0 !important;\r\n    }\r\n    .pl-xl-0,\r\n    .px-xl-0 {\r\n        padding-right: 0 !important;\r\n    }\r\n    .pr-xl-1,\r\n    .px-xl-1 {\r\n        padding-left: 0.25rem !important;\r\n        padding-right: 0 !important;\r\n    }\r\n    .pl-xl-1,\r\n    .px-xl-1 {\r\n        padding-right: 0.25rem !important;\r\n        padding-left: 0 !important;\r\n    }\r\n    .pr-xl-2,\r\n    .px-xl-2 {\r\n        padding-left: 0.5rem !important;\r\n        padding-right: 0 !important;\r\n    }\r\n    .pl-xl-2,\r\n    .px-xl-2 {\r\n        padding-right: 0.5rem !important;\r\n        padding-left: 0 !important;\r\n    }\r\n    .pr-xl-3,\r\n    .px-xl-3 {\r\n        padding-left: 1rem !important;\r\n        padding-right: 0 !important;\r\n    }\r\n    .pl-xl-3,\r\n    .px-xl-3 {\r\n        padding-right: 1rem !important;\r\n        padding-left: 0 !important;\r\n    }\r\n    .pr-xl-4,\r\n    .px-xl-4 {\r\n        padding-left: 1.5rem !important;\r\n        padding-right: 0 !important;\r\n    }\r\n    .pl-xl-4,\r\n    .px-xl-4 {\r\n        padding-right: 1.5rem !important;\r\n        padding-left: 0 !important;\r\n    }\r\n    .pr-xl-5,\r\n    .px-xl-5 {\r\n        padding-right: 1.5rem !important;\r\n        padding-left: 0 !important;\r\n    }\r\n    .pl-xl-5,\r\n    .px-xl-5 {\r\n        padding-right: 3rem !important;\r\n        padding-left: 0 !important;\r\n    }\r\n    .mr-xl-auto,\r\n    .mx-xl-auto {\r\n        margin-left: auto !important;\r\n        margin-right: 0 !important;\r\n    }\r\n    .ml-xl-auto,\r\n    .mx-xl-auto {\r\n        margin-right: auto !important;\r\n        margin-left: 0 !important;\r\n    }\r\n}\r\n\r\n.text-left {\r\n    text-align: right !important;\r\n}\r\n\r\n.text-right {\r\n    text-align: left !important;\r\n}\r\n\r\n@media (min-width: 576px) {\r\n    .text-sm-left {\r\n        text-align: right !important;\r\n    }\r\n    .text-sm-right {\r\n        text-align: left !important;\r\n    }\r\n}\r\n\r\n@media (min-width: 768px) {\r\n    .text-md-left {\r\n        text-align: right !important;\r\n    }\r\n    .text-md-right {\r\n        text-align: left !important;\r\n    }\r\n}\r\n\r\n@media (min-width: 992px) {\r\n    .text-lg-left {\r\n        text-align: right !important;\r\n    }\r\n    .text-lg-right {\r\n        text-align: left !important;\r\n    }\r\n}\r\n\r\n@media (min-width: 1200px) {\r\n    .text-xl-left {\r\n        text-align: right !important;\r\n    }\r\n    .text-xl-right {\r\n        text-align: left !important;\r\n    }\r\n}", ""]);
+exports.push([module.i, "/*!\n * Bootstrap rtl v4.0.0-beta.2 \n * Copyright (http://nafeza.net)\n * Licensed under MIT (https://github.com/twbs/bootstrap/blob/master/LICENSE)\n */\n\n html {\n    direction: rtl;\n}\n\nbody {\n    direction: rtl;\n    text-align: right;\n}\n\ndd {\n    margin-right: 0;\n}\n\ncaption {\n    text-align: right;\n}\n\n.list-unstyled {\n    padding-right: 0;\n}\n\n.list-inline {\n    padding-right: 0;\n}\n\n.list-inline-item:not(:last-child) {\n    margin-right: 5px;\n    margin-left: 0;\n}\n\n.offset-1 {\n    margin-right: 8.333333%;\n    margin-left: 0;\n}\n\n.offset-2 {\n    margin-right: 16.666667%;\n    margin-left: 0;\n}\n\n.offset-3 {\n    margin-right: 25%;\n    margin-left: 0;\n}\n\n.offset-4 {\n    margin-right: 33.333333%;\n    margin-left: 0;\n}\n\n.offset-5 {\n    margin-right: 41.666667%;\n    margin-left: 0;\n}\n\n.offset-6 {\n    margin-right: 50%;\n    margin-left: 0;\n}\n\n.offset-7 {\n    margin-right: 58.333333%;\n    margin-left: 0;\n}\n\n.offset-8 {\n    margin-right: 66.666667%;\n    margin-left: 0;\n}\n\n.offset-9 {\n    margin-right: 75%;\n    margin-left: 0;\n}\n\n.offset-10 {\n    margin-right: 83.333333%;\n    margin-left: 0;\n}\n\n.offset-11 {\n    margin-right: 91.666667%;\n    margin-left: 0;\n}\n\n@media (min-width: 576px) {\n    .offset-sm-0 {\n        margin-right: 0;\n    }\n    .offset-sm-1 {\n        margin-right: 8.333333%;\n        margin-left: 0;\n    }\n    .offset-sm-2 {\n        margin-right: 16.666667%;\n        margin-left: 0;\n    }\n    .offset-sm-3 {\n        margin-right: 25%;\n        margin-left: 0;\n    }\n    .offset-sm-4 {\n        margin-right: 33.333333%;\n        margin-left: 0;\n    }\n    .offset-sm-5 {\n        margin-right: 41.666667%;\n        margin-left: 0;\n    }\n    .offset-sm-6 {\n        margin-right: 50%;\n        margin-left: 0;\n    }\n    .offset-sm-7 {\n        margin-right: 58.333333%;\n        margin-left: 0;\n    }\n    .offset-sm-8 {\n        margin-right: 66.666667%;\n        margin-left: 0;\n    }\n    .offset-sm-9 {\n        margin-right: 75%;\n        margin-left: 0;\n    }\n    .offset-sm-10 {\n        margin-right: 83.333333%;\n        margin-left: 0;\n    }\n    .offset-sm-11 {\n        margin-right: 91.666667%;\n        margin-left: 0;\n    }\n}\n\n@media (min-width: 768px) {\n    .offset-md-0 {\n        margin-right: 0;\n    }\n    .offset-md-1 {\n        margin-right: 8.333333%;\n        margin-left: 0;\n    }\n    .offset-md-2 {\n        margin-right: 16.666667%;\n        margin-left: 0;\n    }\n    .offset-md-3 {\n        margin-right: 25%;\n        margin-left: 0;\n    }\n    .offset-md-4 {\n        margin-right: 33.333333%;\n        margin-left: 0;\n    }\n    .offset-md-5 {\n        margin-right: 41.666667%;\n        margin-left: 0;\n    }\n    .offset-md-6 {\n        margin-right: 50%;\n        margin-left: 0;\n    }\n    .offset-md-7 {\n        margin-right: 58.333333%;\n        margin-left: 0;\n    }\n    .offset-md-8 {\n        margin-right: 66.666667%;\n        margin-left: 0;\n    }\n    .offset-md-9 {\n        margin-right: 75%;\n        margin-left: 0;\n    }\n    .offset-md-10 {\n        margin-right: 83.333333%;\n        margin-left: 0;\n    }\n    .offset-md-11 {\n        margin-right: 91.666667%;\n        margin-left: 0;\n    }\n}\n\n@media (min-width: 992px) {\n    .offset-lg-0 {\n        margin-right: 0;\n    }\n    .offset-lg-1 {\n        margin-right: 8.333333%;\n        margin-left: 0;\n    }\n    .offset-lg-2 {\n        margin-right: 16.666667%;\n        margin-left: 0;\n    }\n    .offset-lg-3 {\n        margin-right: 25%;\n        margin-left: 0;\n    }\n    .offset-lg-4 {\n        margin-right: 33.333333%;\n        margin-left: 0;\n    }\n    .offset-lg-5 {\n        margin-right: 41.666667%;\n        margin-left: 0;\n    }\n    .offset-lg-6 {\n        margin-right: 50%;\n        margin-left: 0;\n    }\n    .offset-lg-7 {\n        margin-right: 58.333333%;\n        margin-left: 0;\n    }\n    .offset-lg-8 {\n        margin-right: 66.666667%;\n        margin-left: 0;\n    }\n    .offset-lg-9 {\n        margin-right: 75%;\n        margin-left: 0;\n    }\n    .offset-lg-10 {\n        margin-right: 83.333333%;\n        margin-left: 0;\n    }\n    .offset-lg-11 {\n        margin-right: 91.666667%;\n        margin-left: 0;\n    }\n}\n\n@media (min-width: 1200px) {\n    .offset-xl-0 {\n        margin-right: 0;\n    }\n    .offset-xl-1 {\n        margin-right: 8.333333%;\n        margin-left: 0;\n    }\n    .offset-xl-2 {\n        margin-right: 16.666667%;\n        margin-left: 0;\n    }\n    .offset-xl-3 {\n        margin-right: 25%;\n        margin-left: 0;\n    }\n    .offset-xl-4 {\n        margin-right: 33.333333%;\n        margin-left: 0;\n    }\n    .offset-xl-5 {\n        margin-right: 41.666667%;\n        margin-left: 0;\n    }\n    .offset-xl-6 {\n        margin-right: 50%;\n        margin-left: 0;\n    }\n    .offset-xl-7 {\n        margin-right: 58.333333%;\n        margin-left: 0;\n    }\n    .offset-xl-8 {\n        margin-right: 66.666667%;\n        margin-left: 0;\n    }\n    .offset-xl-9 {\n        margin-right: 75%;\n        margin-left: 0;\n    }\n    .offset-xl-10 {\n        margin-right: 83.333333%;\n        margin-left: 0;\n    }\n    .offset-xl-11 {\n        margin-right: 91.666667%;\n        margin-left: 0;\n    }\n}\n\n.form-check-label {\n    padding-right: 1.25rem;\n    padding-left: 0;\n}\n\n.form-check-input {\n    margin-right: -1.25rem;\n    margin-left: 0;\n}\n\n.form-check-inline {\n    margin-left: 0.75rem;\n    margin-right: 0;\n}\n\n@media (min-width: 576px) {\n    .form-inline .form-check-label {\n        padding-right: 0;\n    }\n    .form-inline .form-check-input {\n        margin-left: 0.25rem;\n        margin-right: 0;\n    }\n}\n\n.dropdown-toggle::after {\n    margin-right: 0.255em;\n    margin-left: 0;\n}\n\n.dropdown-toggle:empty::after {\n    margin-right: 0;\n}\n\n.dropdown-menu {\n    right: 0;\n    left: initial;\n    float: right;\n    text-align: right;\n}\n\n.dropup .dropdown-toggle::after {\n    margin-right: 0.255em;\n    margin-left: 0;\n}\n\n.dropup .dropdown-toggle:empty::after {\n    margin-right: 0;\n}\n\n.btn-group .btn + .btn,\n.btn-group .btn + .btn-group,\n.btn-group .btn-group + .btn,\n.btn-group .btn-group + .btn-group,\n.btn-group-vertical .btn + .btn,\n.btn-group-vertical .btn + .btn-group,\n.btn-group-vertical .btn-group + .btn,\n.btn-group-vertical .btn-group + .btn-group {\n    margin-right: -1px;\n    margin-left: 0;\n}\n\n.btn-group > .btn:first-child {\n    margin-right: 0;\n}\n\n.btn-group > .btn:first-child:not(:last-child):not(.dropdown-toggle) {\n    border-top-left-radius: 0;\n    border-bottom-left-radius: 0;\n}\n\n.btn-group > .btn:last-child:not(:first-child),\n.btn-group > .dropdown-toggle:not(:first-child) {\n    border-top-right-radius: 0;\n    border-bottom-right-radius: 0;\n}\n\n.btn-group > .btn-group {\n    float: right;\n}\n\n.btn-group > .btn-group:first-child:not(:last-child) > .btn:last-child,\n.btn-group > .btn-group:first-child:not(:last-child) > .dropdown-toggle {\n    border-top-left-radius: 0;\n    border-bottom-left-radius: 0;\n}\n\n.btn-group > .btn-group:last-child:not(:first-child) > .btn:first-child {\n    border-top-right-radius: 0;\n    border-bottom-right-radius: 0;\n}\n\n.btn + .dropdown-toggle-split {\n    padding-right: 0.5625rem;\n    padding-left: 0.5625rem;\n}\n\n.btn + .dropdown-toggle-split::after {\n    margin-right: 0;\n}\n\n.btn-group-vertical > .btn + .btn,\n.btn-group-vertical > .btn + .btn-group,\n.btn-group-vertical > .btn-group + .btn,\n.btn-group-vertical > .btn-group + .btn-group {\n    margin-right: 0;\n}\n\n.input-group-addon:not(:last-child) {\n    border-left: 0;\n}\n\n.input-group .form-control:not(:first-child),\n.input-group-addon:not(:first-child),\n.input-group-btn:not(:first-child) > .btn,\n.input-group-btn:not(:first-child) > .btn-group > .btn,\n.input-group-btn:not(:first-child) > .dropdown-toggle,\n.input-group-btn:not(:last-child) > .btn:not(:first-child),\n.input-group-btn:not(:last-child) > .btn-group:not(:first-child) > .btn {\n    border-top-right-radius: 0;\n    border-bottom-right-radius: 0;\n}\n\n.form-control + .input-group-addon:not(:first-child) {\n    border-right: 0;\n}\n\n.input-group-btn > .btn + .btn {\n    margin-right: -1px;\n    margin-left: 0;\n}\n\n.input-group-btn:first-child > .btn + .btn {\n    margin-right: 0;\n}\n\n.input-group-btn:not(:last-child) > .btn,\n.input-group-btn:not(:last-child) > .btn-group {\n    margin-left: -1px;\n    margin-right: 0;\n}\n\n.input-group-btn:not(:first-child) > .btn,\n.input-group-btn:not(:first-child) > .btn-group {\n    margin-right: 0;\n}\n\n.input-group-btn:not(:first-child) > .btn:first-child,\n.input-group-btn:not(:first-child) > .btn-group:first-child {\n    margin-right: -1px;\n    margin-left: 0;\n}\n\n.custom-control {\n    padding-right: 1.5rem;\n    padding-left: 0;\n    margin-left: 1rem;\n    margin-right: 0;\n}\n\n.custom-control-indicator {\n    right: 0;\n    left: initial;\n}\n\n.custom-controls-stacked .custom-control + .custom-control {\n    margin-right: 0;\n}\n\n\n.custom-file-control::before {\n    left: -1px;\n    right: 0;\n}\n\n.nav {\n    padding-right: 0;\n}\n\n.navbar-brand {\n    margin-left: 1rem;\n    margin-right: 0;\n}\n\n.navbar-nav {\n    padding-right: 0;\n}\n\n@media (min-width: 576px) {\n    .navbar-expand-sm .navbar-nav .dropdown-menu-right {\n        left: 0;\n        right: auto;\n    }\n}\n\n@media (min-width: 768px) {\n    .navbar-expand-md .navbar-nav .dropdown-menu-right {\n        left: 0;\n        right: auto;\n    }\n}\n\n@media (min-width: 992px) {\n    .navbar-expand-lg .navbar-nav .dropdown-menu-right {\n        left: 0;\n        right: auto;\n    }\n}\n\n@media (min-width: 1200px) {\n    .navbar-expand-xl .navbar-nav .dropdown-menu-right {\n        left: 0;\n        right: auto;\n    }\n}\n\n.navbar-expand .navbar-nav .dropdown-menu-right {\n    left: 0;\n    right: auto;\n}\n\n.card-link + .card-link {\n    margin-right: 1.25rem;\n    margin-left: 0;\n}\n\n.card-footer:last-child {\n    border-radius: 0 calc(0.25rem - 1px) calc(0.25rem - 1px) 0;\n}\n\n.pagination {\n    padding-right: 0;\n}\n\n.page-item:first-child .page-link {\n    margin-right: 0;\n    border-top-right-radius: 0.25rem;\n    border-bottom-right-radius: 0.25rem;\n    border-top-left-radius: initial;\n    border-bottom-left-radius: initial;\n}\n\n.page-item:last-child .page-link {\n    border-top-left-radius: 0.25rem;\n    border-bottom-left-radius: 0.25rem;\n    border-top-right-radius: initial;\n    border-bottom-right-radius: initial;\n}\n\n.page-link {\n    margin-right: -1px;\n    margin-left: 0px;\n}\n\n.pagination-lg .page-item:first-child .page-link {\n    border-top-right-radius: 0.3rem;\n    border-bottom-right-radius: 0.3rem;\n    border-top-left-radius: 0;\n    border-bottom-left-radius: 0;\n}\n\n.pagination-lg .page-item:last-child .page-link {\n    border-top-left-radius: 0.3rem;\n    border-bottom-left-radius: 0.3rem;\n    border-top-right-radius: 0;\n    border-bottom-right-radius: 0;\n}\n\n.pagination-sm .page-item:first-child .page-link {\n    border-top-right-radius: 0.2rem;\n    border-bottom-right-radius: 0.2rem;\n    border-top-left-radius: 0;\n    border-bottom-left-radius: 0;\n}\n\n.pagination-sm .page-item:last-child .page-link {\n    border-top-left-radius: 0.2rem;\n    border-bottom-left-radius: 0.2rem;\n    border-top-right-radius: 0;\n    border-bottom-right-radius: 0;\n}\n\n\n.alert-dismissible .close {\n    left: 0;\n    right: initial;\n}\n\n\n.list-group {\n    padding-right: 0;\n}\n\n\n.modal-header .close {\n    margin: -15px auto -15px -15px;\n}\n\n.modal-footer > :not(:first-child) {\n    margin-right: .25rem;\n    margin-left: 0;\n}\n\n.modal-footer > :not(:last-child) {\n    margin-left: .25rem;\n    margin-right: 0;\n}\n\n.tooltip {\n    text-align: right;\n}\n\n.tooltip.bs-tooltip-top .arrow::before, .tooltip.bs-tooltip-auto[x-placement^=\"top\"] .arrow::before {\n    margin-right: -3px;\n    margin-left: 0;\n}\n\n.tooltip.bs-tooltip-right .arrow, .tooltip.bs-tooltip-auto[x-placement^=\"right\"] .arrow {\n    right: 0;\n    left: initial;\n}\n\n.tooltip.bs-tooltip-right .arrow::before, .tooltip.bs-tooltip-auto[x-placement^=\"right\"] .arrow::before {\n    border-left-color: #000;\n    border-right-color: initial;\n}\n\n.tooltip.bs-tooltip-bottom .arrow::before, .tooltip.bs-tooltip-auto[x-placement^=\"bottom\"] .arrow::before {\n    margin-right: -3px;\n    margin-left: 0;\n}\n\n.tooltip.bs-tooltip-left .arrow, .tooltip.bs-tooltip-auto[x-placement^=\"left\"] .arrow {\n    left: 0;\n    right: initial;\n}\n\n.tooltip.bs-tooltip-left .arrow::before, .tooltip.bs-tooltip-auto[x-placement^=\"left\"] .arrow::before {\n    left: 0;\n    right: initial;\n    border-right-color: #000;\n    border-left-color: initial;\n}\n\n.popover {\n    right: 0;\n    left: initial;\n    text-align: right;\n}\n\n\n.popover.bs-popover-top .arrow::before, .popover.bs-popover-auto[x-placement^=\"top\"] .arrow::before {\n    margin-right: -0.8rem;\n    margin-left: 0;\n}\n\n.popover.bs-popover-top .arrow::after, .popover.bs-popover-auto[x-placement^=\"top\"] .arrow::after {\n    margin-right: 0.8rem;\n    margin-left: 0;\n}\n\n.popover.bs-popover-right, .popover.bs-popover-auto[x-placement^=\"right\"] {\n    margin-right: 0.8rem;\n    margin-left: 0;\n}\n\n.popover.bs-popover-right .arrow, .popover.bs-popover-auto[x-placement^=\"right\"] .arrow {\n    right: 0;\n    left: initial;\n}\n\n.popover.bs-popover-right .arrow::before, .popover.bs-popover-auto[x-placement^=\"right\"] .arrow::before,\n.popover.bs-popover-right .arrow::after, .popover.bs-popover-auto[x-placement^=\"right\"] .arrow::after {\n    border-right-width: 0;\n    border-left-width: initial;\n}\n\n.popover.bs-popover-right .arrow::before, .popover.bs-popover-auto[x-placement^=\"right\"] .arrow::before {\n    left: -0.8rem;\n    right: initial;\n    border-left-color: rgba(0, 0, 0, 0.25);\n    border-right-color: initial;\n}\n\n.popover.bs-popover-right .arrow::after, .popover.bs-popover-auto[x-placement^=\"right\"] .arrow::after {\n    right: calc((0.8rem - 1px) * -1);\n    left: initial;\n    border-left-color: #fff;\n    border-right-color: initial;\n}\n\n.popover.bs-popover-bottom .arrow::before, .popover.bs-popover-auto[x-placement^=\"bottom\"] .arrow::before,\n.popover.bs-popover-bottom .arrow::after, .popover.bs-popover-auto[x-placement^=\"bottom\"] .arrow::after {\n    margin-right: -0.8rem;\n    margin-left: 0;\n}\n\n.popover.bs-popover-bottom .popover-header::before, .popover.bs-popover-auto[x-placement^=\"bottom\"] .popover-header::before {\n    right: 50%;\n    left: initial;\n    margin-right: -10px;\n    margin-left: 0px;\n}\n\n.popover.bs-popover-left, .popover.bs-popover-auto[x-placement^=\"left\"] {\n    margin-left: 0.8rem;\n    margin-right: 0;\n}\n\n.popover.bs-popover-left .arrow, .popover.bs-popover-auto[x-placement^=\"left\"] .arrow {\n    left: 0;\n    right: initial;\n}\n\n.popover.bs-popover-left .arrow::before, .popover.bs-popover-auto[x-placement^=\"left\"] .arrow::before,\n.popover.bs-popover-left .arrow::after, .popover.bs-popover-auto[x-placement^=\"left\"] .arrow::after {\n    border-left-width: 0;\n}\n\n.popover.bs-popover-left .arrow::before, .popover.bs-popover-auto[x-placement^=\"left\"] .arrow::before {\n    left: -0.8rem;\n    right: initial;\n    border-right-color: rgba(0, 0, 0, 0.25);\n    border-left-color: initial;\n}\n\n.popover.bs-popover-left .arrow::after, .popover.bs-popover-auto[x-placement^=\"left\"] .arrow::after {\n    left: calc((0.8rem - 1px) * -1);\n    right: initial;\n    border-right-color: #fff;\n    border-left-color: initial;\n}\n\n.carousel-item-next.carousel-item-left,\n.carousel-item-prev.carousel-item-right {\n    -webkit-transform: translateX(0);\n    transform: translateX(0);\n}\n\n@supports ((-webkit-transform-style: preserve-3d) or (transform-style: preserve-3d)) {\n    .carousel-item-next.carousel-item-left,\n    .carousel-item-prev.carousel-item-right {\n        -webkit-transform: translate3d(0, 0, 0);\n        transform: translate3d(0, 0, 0);\n    }\n}\n\n.carousel-item-next,\n.active.carousel-item-left {\n    -webkit-transform: translateX(100%);\n    transform: translateX(100%);\n}\n\n.carousel-item-next,\n.active.carousel-item-right {\n    -webkit-transform: translateX(0);\n    transform: translateX(0);\n}\n\n@supports ((-webkit-transform-style: preserve-3d) or (transform-style: preserve-3d)) {\n    .carousel-item-next,\n    .active.carousel-item-left {\n        -webkit-transform: translate3d(100%, 0, 0);\n        transform: translate3d(100%, 0, 0);\n    }\n    .carousel-item-next,\n    .active.carousel-item-right {\n        -webkit-transform: translate3d(0, 0, 0);\n        transform: translate3d(0, 0, 0);\n    }\n}\n\n.carousel-item-prev,\n.active.carousel-item-left {\n    -webkit-transform: translateX(-100%);\n    transform: translateX(-100%);\n}\n\n.carousel-item-prev,\n.active.carousel-item-left {\n    -webkit-transform: translateX(0%);\n    transform: translateX(0%);\n}\n\n@supports ((-webkit-transform-style: preserve-3d) or (transform-style: preserve-3d)) {\n    .carousel-item-prev,\n    .active.carousel-item-right {\n        -webkit-transform: translate3d(-100%, 0, 0);\n        transform: translate3d(-100%, 0, 0);\n    }\n    .active.carousel-item-left {\n        -webkit-transform: translate3d(0, 0, 0);\n        transform: translate3d(0, 0, 0);\n    }\n}\n\n.carousel-control-prev {\n    right: 0;\n    left: initial;\n}\n\n.carousel-control-next {\n    left: 0;\n    right: initial;\n}\n\n.carousel-indicators {\n    padding-right: 0;\n}\n.carousel-indicators li::before {\n    right: 0;\n    left: initial;\n}\n\n.carousel-indicators li::after {\n    right: 0;\n    left: initial;\n}\n\n.border-right-0 {\n    border-left: 0 !important;\n}\n\n.border-left-0 {\n    border-right: 0 !important;\n}\n\n.rounded-right {\n    border-top-left-radius: 0.25rem !important;\n    border-bottom-left-radius: 0.25rem !important;\n}\n\n.rounded-left {\n    border-top-right-radius: 0.25rem !important;\n    border-bottom-right-radius: 0.25rem !important;\n}\n\n.embed-responsive .embed-responsive-item,\n.embed-responsive iframe,\n.embed-responsive embed,\n.embed-responsive object,\n.embed-responsive video {\n    position: absolute;\n    right: 0;\n    left: initial;\n}\n\n.float-left {\n    float: right !important;\n}\n\n.float-right {\n    float: left !important;\n}\n\n@media (min-width: 576px) {\n    .float-sm-left {\n        float: right !important;\n    }\n    .float-sm-right {\n        float: left !important;\n    }\n}\n\n@media (min-width: 768px) {\n    .float-md-left {\n        float: right !important;\n    }\n    .float-md-right {\n        float: left !important;\n    }\n}\n\n@media (min-width: 992px) {\n    .float-lg-left {\n        float: right !important;\n    }\n    .float-lg-right {\n        float: left !important;\n    }\n}\n\n@media (min-width: 1200px) {\n    .float-xl-left {\n        float: right !important;\n    }\n    .float-xl-right {\n        float: left !important;\n    }\n}\n\n.mr-0,\n.mx-0 {\n    margin-left: 0 !important;\n}\n\n.ml-0,\n.mx-0 {\n    margin-right: 0 !important;\n}\n\n.mr-1,\n.mx-1 {\n    margin-left: 0.25rem !important;\n}\n\n.ml-1,\n.mx-1 {\n    margin-right: 0.25rem !important;\n}\n\n\n.mr-2,\n.mx-2 {\n    margin-left: 0.5rem !important;\n}\n\n.ml-2,\n.mx-2 {\n    margin-right: 0.5rem !important;\n}\n\n.mr-3,\n.mx-3 {\n    margin-left: 1rem !important;\n}\n\n.ml-3,\n.mx-3 {\n    margin-right: 1rem !important;\n}\n\n.mr-4,\n.mx-4 {\n    margin-left: 1.5rem !important;\n}\n\n.ml-4,\n.mx-4 {\n    margin-right: 1.5rem !important;\n}\n\n.mr-5,\n.mx-5 {\n    margin-left: 3rem !important;\n}\n\n.ml-5,\n.mx-5 {\n    margin-right: 3rem !important;\n}\n\n.pr-0,\n.px-0 {\n    padding-left: 0 !important;\n}\n\n.pl-0,\n.px-0 {\n    padding-right: 0 !important;\n}\n\n.pr-1,\n.px-1 {\n    padding-left: 0.25rem !important;\n}\n\n.pl-1,\n.px-1 {\n    padding-right: 0.25rem !important;\n}\n\n.pr-2,\n.px-2 {\n    padding-left: 0.5rem !important;\n}\n\n.pl-2,\n.px-2 {\n    padding-right: 0.5rem !important;\n}\n\n.pr-3,\n.px-3 {\n    padding-left: 1rem !important;\n}\n\n.pl-3,\n.px-3 {\n    padding-right: 1rem !important;\n}\n\n.pr-4,\n.px-4 {\n    padding-left: 1.5rem !important;\n    padding-right: 0 !important;\n}\n\n.pl-4,\n.px-4 {\n    padding-right: 1.5rem !important;\n    padding-left: 0 !important;\n}\n\n.pr-5,\n.px-5 {\n    padding-left: 3rem !important;\n    padding-right: 0 !important;\n}\n\n.pl-5,\n.px-5 {\n    padding-right: 3rem !important;\n    padding-left: 0 !important;\n}\n\n.mr-auto,\n.mx-auto {\n    margin-left: auto !important;\n    margin-right: 0 !important;\n}\n\n.ml-auto,\n.mx-auto {\n    margin-right: auto !important;\n    margin-left: 0 !important;\n}\n\n@media (min-width: 576px) {\n    .mr-sm-0,\n    .mx-sm-0 {\n        margin-left: 0 !important;\n    }\n    .ml-sm-0,\n    .mx-sm-0 {\n        margin-right: 0 !important;\n    }\n    .mr-sm-1,\n    .mx-sm-1 {\n        margin-left: 0.25rem !important;\n        margin-right: 0 !important;\n    }\n    .ml-sm-1,\n    .mx-sm-1 {\n        margin-right: 0.25rem !important;\n        margin-left: 0 !important;\n    }\n    .mr-sm-2,\n    .mx-sm-2 {\n        margin-left: 0.5rem !important;\n        margin-right: 0 !important;\n    }\n    .ml-sm-2,\n    .mx-sm-2 {\n        margin-right: 0.5rem !important;\n        margin-left: 0 !important;\n    }\n    .mr-sm-3,\n    .mx-sm-3 {\n        margin-left: 1rem !important;\n        margin-right: 0 !important;\n    }\n    .ml-sm-3,\n    .mx-sm-3 {\n        margin-right: 1rem !important;\n        margin-left: 0 !important;\n    }\n    .mr-sm-4,\n    .mx-sm-4 {\n        margin-left: 1.5rem !important;\n        margin-right: 0 !important;\n    }\n    .ml-sm-4,\n    .mx-sm-4 {\n        margin-right: 1.5rem !important;\n        margin-left: 0 !important;\n    }\n    .mr-sm-5,\n    .mx-sm-5 {\n        margin-left: 3rem !important;\n        margin-right: 0 !important;\n    }\n    .ml-sm-5,\n    .mx-sm-5 {\n        margin-right: 3rem !important;\n        margin-left: 0 !important;\n    }\n    .pr-sm-0,\n    .px-sm-0 {\n        padding-left: 0 !important;\n    }\n    .pl-sm-0,\n    .px-sm-0 {\n        padding-right: 0 !important;\n    }\n    .pt-sm-1,\n    .py-sm-1 {\n        padding-right: 0.25rem !important;\n        padding-top: 0 !important;\n    }\n    .pr-sm-1,\n    .px-sm-1 {\n        padding-top: 0.25rem !important;\n        padding-right: 0 !important;\n    }\n    .pl-sm-1,\n    .px-sm-1 {\n        padding-left: 0.25rem !important;\n    }\n    .pr-sm-2,\n    .px-sm-2 {\n        padding-left: 0.5rem !important;\n        padding-right: 0 !important;\n    }\n    .pl-sm-2,\n    .px-sm-2 {\n        padding-right: 0.5rem !important;\n        padding-left: 0 !important;\n    }\n    .pr-sm-3,\n    .px-sm-3 {\n        padding-left: 1rem !important;\n        padding-right: 0 !important;\n    }\n    .pl-sm-3,\n    .px-sm-3 {\n        padding-right: 1rem !important;\n        padding-left: 0 !important;\n    }\n    .pr-sm-4,\n    .px-sm-4 {\n        padding-left: 1.5rem !important;\n        padding-right: 0 !important;\n    }\n    .pl-sm-4,\n    .px-sm-4 {\n        padding-right: 1.5rem !important;\n        padding-left: 0 !important;\n    }\n    .pr-sm-5,\n    .px-sm-5 {\n        padding-left: 3rem !important;\n        padding-right: 0 !important;\n    }\n    .pl-sm-5,\n    .px-sm-5 {\n        padding-right: 3rem !important;\n        padding-left: 0 !important;\n    }\n    .mr-sm-auto,\n    .mx-sm-auto {\n        margin-left: auto !important;\n        margin-right: 0 !important;\n    }\n    .ml-sm-auto,\n    .mx-sm-auto {\n        margin-right: auto !important;\n        margin-left: 0 !important;\n    }\n}\n\n@media (min-width: 768px) {\n    .mr-md-0,\n    .mx-md-0 {\n        margin-left: 0 !important;\n    }\n    .ml-md-0,\n    .mx-md-0 {\n        margin-right: 0 !important;\n    }\n    .mr-md-1,\n    .mx-md-1 {\n        margin-left: 0.25rem !important;\n        margin-right: 0 !important;\n    }\n    .ml-md-1,\n    .mx-md-1 {\n        margin-right: 0.25rem !important;\n        margin-left: 0 !important;\n    }\n    .mr-md-2,\n    .mx-md-2 {\n        margin-left: 0.5rem !important;\n        margin-right: 0 !important;\n    }\n    .ml-md-2,\n    .mx-md-2 {\n        margin-right: 0.5rem !important;\n        margin-left: 0 !important;\n    }\n    .mr-md-3,\n    .mx-md-3 {\n        margin-left: 1rem !important;\n        margin-right: 0 !important;\n    }\n    .ml-md-3,\n    .mx-md-3 {\n        margin-right: 1rem !important;\n        margin-left: 0 !important;\n    }\n    .mr-md-4,\n    .mx-md-4 {\n        margin-left: 1.5rem !important;\n        margin-right: 0 !important;\n    }\n    .ml-md-4,\n    .mx-md-4 {\n        margin-right: 1.5rem !important;\n        margin-left: 0 !important;\n    }\n    .mr-md-5,\n    .mx-md-5 {\n        margin-left: 3rem !important;\n        margin-right: 0 !important;\n    }\n    .ml-md-5,\n    .mx-md-5 {\n        margin-right: 3rem !important;\n        margin-left: 0 !important;\n    }\n    .pr-md-0,\n    .px-md-0 {\n        padding-left: 0 !important;\n    }\n    .pb-md-0,\n    .py-md-0 {\n        padding-bottom: 0 !important;\n    }\n    .pl-md-0,\n    .px-md-0 {\n        padding-right: 0 !important;\n    }\n    .pr-md-1,\n    .px-md-1 {\n        padding-left: 0.25re !important;\n        padding-right: 0 !important;\n    }\n    .pl-md-1,\n    .px-md-1 {\n        padding-right: 0.25rem !important;\n        padding-left: 0 !important;\n    }\n    .pr-md-2,\n    .px-md-2 {\n        padding-left: 0.5rem !important;\n        padding-right: 0 !important;\n    }\n    .pl-md-2,\n    .px-md-2 {\n        padding-left: 0.5rem !important;\n        padding-right: 0 !important;\n    }\n    .pr-md-3,\n    .px-md-3 {\n        padding-left: 1rem !important;\n        padding-right: 0 !important;\n    }\n    .pl-md-3,\n    .px-md-3 {\n        padding-right: 1rem !important;\n        padding-left: 0 !important;\n    }\n    .pr-md-4,\n    .px-md-4 {\n        padding-left: 1.5rem !important;\n        padding-right: 0 !important;\n    }\n    .pl-md-4,\n    .px-md-4 {\n        padding-right: 1.5rem !important;\n        padding-left: 0 !important;\n    }\n    .pr-md-5,\n    .px-md-5 {\n        padding-left: 3rem !important;\n        padding-right: 0 !important;\n    }\n    .pl-md-5,\n    .px-md-5 {\n        padding-right: 3rem !important;\n        padding-left: 0 !important;\n    }\n    .mr-md-auto,\n    .mx-md-auto {\n        margin-left: auto !important;\n        margin-right: 0 !important;\n    }\n    .ml-md-auto,\n    .mx-md-auto {\n        margin-right: auto !important;\n        margin-left: 0 !important;\n    }\n}\n\n@media (min-width: 992px) {\n    .mr-lg-0,\n    .mx-lg-0 {\n        margin-left: 0 !important;\n    }\n    .ml-lg-0,\n    .mx-lg-0 {\n        margin-right: 0 !important;\n    }\n    .mr-lg-1,\n    .mx-lg-1 {\n        margin-left: 0.25rem !important;\n        margin-right: 0 !important;\n    }\n    .ml-lg-1,\n    .mx-lg-1 {\n        margin-left: 0.25rem !important;\n        margin-right: 0 !important;\n    }\n    .mr-lg-2,\n    .mx-lg-2 {\n        margin-left: 0.5rem !important;\n        margin-right: 0 !important;\n    }\n    .ml-lg-2,\n    .mx-lg-2 {\n        margin-right: 0.5rem !important;\n        margin-left: 0 !important;\n    }\n    .mr-lg-3,\n    .mx-lg-3 {\n        margin-left: 1rem !important;\n        margin-right: 0 !important;\n    }\n    .ml-lg-3,\n    .mx-lg-3 {\n        margin-right: 1rem !important;\n        margin-left: 0 !important;\n    }\n    .mr-lg-4,\n    .mx-lg-4 {\n        margin-left: 1.5rem !important;\n        margin-right: 0 !important;\n    }\n    .ml-lg-4,\n    .mx-lg-4 {\n        margin-right: 1.5rem !important;\n        margin-left: 0 !important;\n    }\n    .mr-lg-5,\n    .mx-lg-5 {\n        margin-left: 3rem !important;\n        margin-right: 0 !important;\n    }\n    .ml-lg-5,\n    .mx-lg-5 {\n        margin-right: 3rem !important;\n        margin-left: 0 !important;\n    }\n    .pr-lg-0,\n    .px-lg-0 {\n        padding-left: 0 !important;\n    }\n    .pl-lg-0,\n    .px-lg-0 {\n        padding-right: 0 !important;\n    }\n    .pr-lg-1,\n    .px-lg-1 {\n        padding-left: 0.25rem !important;\n        padding-right: 0 !important;\n    }\n    .pl-lg-1,\n    .px-lg-1 {\n        padding-right: 0.25rem !important;\n        padding-left: 0 !important;\n    }\n    .pr-lg-2,\n    .px-lg-2 {\n        padding-left: 0.5rem !important;\n        padding-right: 0 !important;\n    }\n    .pl-lg-2,\n    .px-lg-2 {\n        padding-right: 0.5rem !important;\n        padding-left: 0 !important;\n    }\n    .pr-lg-3,\n    .px-lg-3 {\n        padding-left: 1rem !important;\n        padding-right: 0 !important;\n    }\n    .pl-lg-3,\n    .px-lg-3 {\n        padding-right: 1rem !important;\n        padding-left: 0 !important;\n    }\n    .pr-lg-4,\n    .px-lg-4 {\n        padding-left: 1.5rem !important;\n        padding-right: 0 !important;\n    }\n    .pl-lg-4,\n    .px-lg-4 {\n        padding-right: 1.5rem !important;\n        padding-left: 0 !important;\n    }\n    .pr-lg-5,\n    .px-lg-5 {\n        padding-left: 3rem !important;\n        padding-right: 0 !important;\n    }\n    .pl-lg-5,\n    .px-lg-5 {\n        padding-right: 3rem !important;\n        padding-left: 0 !important;\n    }\n    .mr-lg-auto,\n    .mx-lg-auto {\n        margin-left: auto !important;\n        margin-right: 0 !important;\n    }\n    .ml-lg-auto,\n    .mx-lg-auto {\n        margin-right: auto !important;\n        margin-left: 0 !important;\n    }\n}\n\n@media (min-width: 1200px) {\n    .mr-xl-0,\n    .mx-xl-0 {\n        margin-left: 0 !important;\n    }\n    .ml-xl-0,\n    .mx-xl-0 {\n        margin-right: 0 !important;\n    }\n    .mr-xl-1,\n    .mx-xl-1 {\n        margin-left: 0.25rem !important;\n        margin-right: 0 !important;\n    }\n    .ml-xl-1,\n    .mx-xl-1 {\n        margin-right: 0.25rem !important;\n        margin-left: 0 !important;\n    }\n    .mr-xl-2,\n    .mx-xl-2 {\n        margin-left: 0.5rem !important;\n        margin-right: 0 !important;\n    }\n    .ml-xl-2,\n    .mx-xl-2 {\n        margin-right: 0.5rem !important;\n        margin-left: 0 !important;\n    }\n    .mr-xl-3,\n    .mx-xl-3 {\n        margin-left: 1rem !important;\n        margin-right: 0 !important;\n    }\n    .ml-xl-3,\n    .mx-xl-3 {\n        margin-right: 1rem !important;\n        margin-left: 0 !important;\n    }\n    .mr-xl-4,\n    .mx-xl-4 {\n        margin-left: 1.5rem !important;\n        margin-right: 0 !important;\n    }\n    .ml-xl-4,\n    .mx-xl-4 {\n        margin-right: 1.5rem !important;\n        margin-left: 0 !important;\n    }\n    .mr-xl-5,\n    .mx-xl-5 {\n        margin-left: 3rem !important;\n        margin-right: 0 !important;\n    }\n    .ml-xl-5,\n    .mx-xl-5 {\n        margin-right: 3rem !important;\n        margin-left: 0 !important;\n    }\n    .pr-xl-0,\n    .px-xl-0 {\n        padding-left: 0 !important;\n    }\n    .pl-xl-0,\n    .px-xl-0 {\n        padding-right: 0 !important;\n    }\n    .pr-xl-1,\n    .px-xl-1 {\n        padding-left: 0.25rem !important;\n        padding-right: 0 !important;\n    }\n    .pl-xl-1,\n    .px-xl-1 {\n        padding-right: 0.25rem !important;\n        padding-left: 0 !important;\n    }\n    .pr-xl-2,\n    .px-xl-2 {\n        padding-left: 0.5rem !important;\n        padding-right: 0 !important;\n    }\n    .pl-xl-2,\n    .px-xl-2 {\n        padding-right: 0.5rem !important;\n        padding-left: 0 !important;\n    }\n    .pr-xl-3,\n    .px-xl-3 {\n        padding-left: 1rem !important;\n        padding-right: 0 !important;\n    }\n    .pl-xl-3,\n    .px-xl-3 {\n        padding-right: 1rem !important;\n        padding-left: 0 !important;\n    }\n    .pr-xl-4,\n    .px-xl-4 {\n        padding-left: 1.5rem !important;\n        padding-right: 0 !important;\n    }\n    .pl-xl-4,\n    .px-xl-4 {\n        padding-right: 1.5rem !important;\n        padding-left: 0 !important;\n    }\n    .pr-xl-5,\n    .px-xl-5 {\n        padding-right: 1.5rem !important;\n        padding-left: 0 !important;\n    }\n    .pl-xl-5,\n    .px-xl-5 {\n        padding-right: 3rem !important;\n        padding-left: 0 !important;\n    }\n    .mr-xl-auto,\n    .mx-xl-auto {\n        margin-left: auto !important;\n        margin-right: 0 !important;\n    }\n    .ml-xl-auto,\n    .mx-xl-auto {\n        margin-right: auto !important;\n        margin-left: 0 !important;\n    }\n}\n\n.text-left {\n    text-align: right !important;\n}\n\n.text-right {\n    text-align: left !important;\n}\n\n@media (min-width: 576px) {\n    .text-sm-left {\n        text-align: right !important;\n    }\n    .text-sm-right {\n        text-align: left !important;\n    }\n}\n\n@media (min-width: 768px) {\n    .text-md-left {\n        text-align: right !important;\n    }\n    .text-md-right {\n        text-align: left !important;\n    }\n}\n\n@media (min-width: 992px) {\n    .text-lg-left {\n        text-align: right !important;\n    }\n    .text-lg-right {\n        text-align: left !important;\n    }\n}\n\n@media (min-width: 1200px) {\n    .text-xl-left {\n        text-align: right !important;\n    }\n    .text-xl-right {\n        text-align: left !important;\n    }\n}", ""]);
 
 // exports
 
